@@ -100,11 +100,10 @@
     </v-row>
   </v-container>
 </template>
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 <script lang="ts">
   import Vue from 'vue'
   import "@/assets/css/basic.css"
-  
   export default Vue.extend({
     data() {
       return {
@@ -277,7 +276,7 @@
 }
 .ribbon2 {
   width: 70px;
-  padding: 10px;
+  padding: 15px 10px 40px;
   position: absolute;
   top: -6px;
   right: 40px;
@@ -285,7 +284,8 @@
   font-weight: 600;
   text-align: center;
   border-top-left-radius: 3px;
-  background: #b0dde4;
+  background: #d1fdfb;
+  box-shadow: 1px 1px 1px rgb(235, 235, 235);
 }
 .ribbon2:before {
   height: 0;
@@ -304,9 +304,10 @@
   width: 0;
   bottom: -29.5px;
   left: 0;
-  border-left: 35px solid #b0dde4;
-  border-right: 35px solid #b0dde4;
+  border-left: 35px solid #d1fdfb;
+  border-right: 35px solid #d1fdfb;
   border-bottom: 30px solid transparent;
+  box-shadow: 2px 0px 1px -1px rgb(235, 235, 235);
 }
 .ribbon3 {
   z-index: 2;
@@ -319,8 +320,9 @@
   top: 20px;
   font-size: 1.1em;
   font-weight: 600;
-  background: #b0dde4;
-  box-shadow: 1px 1px 2px #999;
+  background: #ffdfee;
+  // border-bottom: 2px dashed #df4c73;
+  // box-shadow: 1px 1px 1px rgb(235, 235, 235);
 }
 .ribbon3:before, .ribbon3:after {
   content: "";
@@ -331,7 +333,7 @@
   width: 0;
   top: -8.5px;
   left: 0.1px;
-  border-bottom: 9px solid #286fb4;
+  border-bottom: 9px solid #df4c73;
   border-left: 9px solid transparent;
 }
 .ribbon3:after {
@@ -340,7 +342,7 @@
   right: -14.5px;
   border-top: 25px solid transparent;
   border-bottom: 25px solid transparent;
-  border-left: 15px solid #b0dde4;
+  border-left: 15px solid #ffdfee;
 }
 .ribbon4 {
   position: absolute;

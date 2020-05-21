@@ -8,23 +8,37 @@
         height="66"
         class="navBar"
       >
-        <v-toolbar-title style="font-family: 'ON-IGothic'; color: #df4c73; font-size: 2em; font-weight: bolder;">빌리도</v-toolbar-title>
-
+        <v-toolbar-title>
+          <router-link to="/" class="navTitle">
+            빌리도
+          </router-link>
+        </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon style="color: black; font-size: 1em; font-weight: 600; margin-right: 20px;">
-          둘러보기
+        <v-btn icon 
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 20px;"
+        >
+          <router-link to="">
+            둘러보기
+          </router-link>
         </v-btn>
-        <v-btn icon v-if="true" style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
-          로그인
+        <v-btn icon 
+          v-if="true" 
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+        >
+          <router-link to="/auth">
+            로그인
+          </router-link>
         </v-btn>
         <v-btn icon v-else style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
-          마이페이지
+          <router-link to="">
+            마이페이지
+          </router-link>
         </v-btn>
       </v-app-bar>
     </v-card>
     <v-content>
-        <router-view></router-view>
-      </v-content>
+      <router-view></router-view>
+    </v-content>
   </v-app>
 </template>
 
@@ -46,5 +60,11 @@ export default Vue.extend({
 .navBar {
   border-top: 2px solid #df4c73 !important;
   box-shadow: 1px 1px 1px #ccc !important;
+}
+a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navTitle {
+  font-family: 'ON-IGothic'; 
+  color: #df4c73 !important; 
+  font-size: 2em; 
+  font-weight: bolder;
 }
 </style>
