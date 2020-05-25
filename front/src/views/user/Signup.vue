@@ -1,84 +1,98 @@
 <template>
-  <v-container class="form-structor mt-12">
-    <div class="signup">
-      <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
-      <div class="form-holder">
-        <input type="text" class="input" placeholder="Name" />
-        <input type="email" class="input" placeholder="Email" />
-        <input type="password" class="input" placeholder="Password" />
-      </div>
-      <button class="submit-btn">Sign up</button>
-    </div>
-    <div class="login slide-up">
-      <div class="center">
-        <h2 class="form-title" id="login"><span>or</span>Log in</h2>
-        <div class="form-holder">
-          <input type="email" class="input" placeholder="Email" />
-          <input type="password" class="input" placeholder="Password" />
-        </div>
-        <button class="submit-btn">Log in</button>
-      </div>
-    </div>
-  </v-container>
+<div class="signup-wrapper pt-12">
+	<v-row justify="center">
+		<v-col cols="8" md="6">
+			<v-container class="form-structor">
+				<div class="signup">
+					<h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+					<div class="form-holder">
+						<input type="text" class="input" placeholder="Name" />
+						<input type="email" class="input" placeholder="Email" />
+						<input type="password" class="input" placeholder="Password" />
+					</div>
+					<button class="submit-btn">Sign up</button>
+				</div>
+				<div class="login slide-up">
+					<div class="center">
+						<h2 class="form-title" id="login"><span>or</span>Log in</h2>
+						<div class="form-holder">
+							<input type="email" class="input" placeholder="Email" />
+							<input type="password" class="input" placeholder="Password" />
+						</div>
+						<button class="submit-btn">Log in</button>
+					</div>
+				</div>
+			</v-container>
+		</v-col>
+	</v-row>
+</div>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
+  import { Component, Vue } from 'vue-property-decorator'
 
-  export default Vue.extend({
-    mounted() {
-      // console.clear();
+	@Component
+  export default class Signup extends Vue{
+    // mounted() {
+    //   // console.clear();
 
-      // const loginBtn = document.getElementById('login');
-      // const signupBtn = document.getElementById('signup');
+    //   const loginBtn = document.getElementById('login');
+    //   const signupBtn = document.getElementById('signup');
 
-      // loginBtn.addEventListener('click', (e: any) => {
-      //   const parent = e.target.parentNode.parentNode;
-      //   Array.from(e.target.parentNode.parentNode.classList).find((element) => {
-      //     if(element !== "slide-up") {
-      //       parent.classList.add('slide-up')
-      //     }else{
-      //       signupBtn.parentNode.classList.add('slide-up')
-      //       parent.classList.remove('slide-up')
-      //     }
-      //   });
-      // });
+    //   loginBtn.addEventListener('click', (e: any) => {
+    //     const parent = e.target.parentNode.parentNode;
+    //     Array.from(e.target.parentNode.parentNode.classList).find((element) => {
+    //       if(element !== "slide-up") {
+    //         parent.classList.add('slide-up')
+    //       }else{
+    //         signupBtn.parentNode.classList.add('slide-up')
+    //         parent.classList.remove('slide-up')
+    //       }
+    //     });
+    //   });
 
-      // signupBtn.addEventListener('click', (e: any) => {
-      //   const parent = e.target.parentNode;
-      //   Array.from(e.target.parentNode.classList).find((element) => {
-      //     if(element !== "slide-up") {
-      //       parent.classList.add('slide-up')
-      //     }else{
-      //       loginBtn.parentNode.parentNode.classList.add('slide-up')
-      //       parent.classList.remove('slide-up')
-      //     }
-      //   });
-      // });
-    }
-  })
+    //   signupBtn.addEventListener('click', (e: any) => {
+    //     const parent = e.target.parentNode;
+    //     Array.from(e.target.parentNode.classList).find((element) => {
+    //       if(element !== "slide-up") {
+    //         parent.classList.add('slide-up')
+    //       }else{
+    //         loginBtn.parentNode.parentNode.classList.add('slide-up')
+    //         parent.classList.remove('slide-up')
+    //       }
+    //     });
+    //   });
+    // }
+  }
 </script>
 
 <style lang="scss" scoped>
 
 @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
 
-html,body {
-	position: relative;
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: "Fira Sans", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+// html,body {
+// 	position: relative;
+// 	min-height: 100vh;
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: center;
+// 	font-family: "Fira Sans", Helvetica, Arial, sans-serif;
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+// }
+.signup-wrapper {
+	width: 100%;
+	height: 100%;
+	background-image: url('../../assets/images/signBack.jpg') !important;
+	background-size: 100% 100%;
 }
-
 .form-structor {
-	background-color: #222;
+	background-color: rgb(249, 240, 255);
+	border: 2px dotted rgb(255, 255, 255);
+	// border: 2px solid #df4c73;
 	border-radius: 15px;
 	height: 550px;
-	width: 350px;
+	// width: 350px;
 	position: relative;
 	overflow: hidden;
 	
@@ -90,13 +104,12 @@ html,body {
 		background-repeat: no-repeat;
 		background-position: left bottom;
 		background-size: 750px;
-		background-image: url('https://user-images.githubusercontent.com/52478972/82554559-25890c80-9ba1-11ea-9aaf-ce62ddd1cf1c.jpg');
-		// background-image: url('https://user-images.githubusercontent.com/52478972/82554960-d5f71080-9ba1-11ea-9407-5f03d4bff2e3.jpg');
+		// background-image: url('https://user-images.githubusercontent.com/52478972/82554559-25890c80-9ba1-11ea-9aaf-ce62ddd1cf1c.jpg');
 	}
 	
 	.signup {
 		position: absolute;
-		top: 50%;
+		top: 30%;
 		left: 50%;
 		-webkit-transform: translate(-50%, -50%);
 		width: 65%;
@@ -129,7 +142,7 @@ html,body {
 		}
 		
 		.form-title {
-			color: #fff;
+			color: rgb(0, 0, 0);
 			font-size: 1.7em;
 			text-align: center;
 			
@@ -158,7 +171,7 @@ html,body {
 				height: 30px;
 				line-height: 30px;
 				padding: 8px 15px;
-				border-bottom: 1px solid #eee;
+				border-bottom: 1px solid rgb(238, 238, 238);
 				width: 100%;
 				font-size: 12px;
 				
@@ -211,6 +224,7 @@ html,body {
 			top: -20px;
 			-webkit-transform: translate(-50%, 0);
 			background-color: #fff;
+			border-top: 2px solid #8c28b4;
 			width: 200%;
 			height: 250px;
 			border-radius: 50%;

@@ -17,9 +17,7 @@
         <v-btn icon 
           style="color: black; font-size: 1em; font-weight: 600; margin-right: 20px;"
         >
-          <router-link to="">
-            둘러보기
-          </router-link>
+          둘러보기
         </v-btn>
         <v-btn icon 
           v-if="true" 
@@ -36,7 +34,7 @@
         </v-btn>
       </v-app-bar>
     </v-card>
-    <v-content>
+    <v-content class="content-wrapper">
       <router-view></router-view>
     </v-content>
   </v-app>
