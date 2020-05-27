@@ -5,7 +5,7 @@
         afixed 
         app 
         color="#fff" 
-        height="66"
+        height="70"
         class="navBar"
       >
         <v-toolbar-title>
@@ -56,12 +56,13 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .navBar {
-  border-top: 2px solid #df4c73 !important;
+  border-top: 2px solid #8c28b4 !important;
   box-shadow: 1px 1px 1px #ccc !important;
 }
 a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navTitle {
   font-family: 'ON-IGothic'; 
-  color: #df4c73 !important; 
+  color: #3d3d3d !important;
+  // text-shadow: 1px 1px 1px #8c28b4;
   font-size: 2em; 
   font-weight: bolder;
 }

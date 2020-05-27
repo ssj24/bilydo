@@ -5,6 +5,7 @@
         <v-select
           :items="categories"
           label="Category"
+          color="#8c28b4"
         ></v-select>
         <input type="text" class="searchInput">
         <button @click="search">
@@ -122,9 +123,11 @@
 }
 .searchBar .searchInput {
   width: 60%;
-  padding: 10px 10px 4px 5%;
+  padding: 20px 10px 4px 5%;
   border-bottom: 1px solid #ccc;
   display: relative;
+  color: black;
+  font-weight: 900;
 }
 .magnifyIcon {
   display: relative;

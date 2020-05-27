@@ -4,77 +4,107 @@
       {{userName}}
     </h1>
     <h3 style="display: inline-block;">님</h3>
-    <div class="list">
-      <div class="num">
-        <h3>
-          이메일
-          <p>
-            abc@abcd.com
-          </p>
-        </h3>
+    <v-row>
+      <v-col cols="12" sm="10" class="attrs">
         
+        <div class="num">
+          <h3>
+            <input type="password" placeholder="password">
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{userName}}
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{userContact}}
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{userAddress}}
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{averagePoint}}
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{contractProgress}}
+          </h3>
+        </div>
+        <div class="num">
+          <h3>
+            {{contractComplete}}
+          </h3>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-cols>
+        <v-data-table
+          :items="accountSetting"
+          hide-default-footer
+        >
+          <template v-slot:item="props">
+            <v-edit-dialog
+              :return-value.sync="props.item"
+              @save="save"
+              @cancel="cancel"
+              @open="open"
+              @close="close"
+            > {{ props.item }}
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item"
+                  label="Edit"
+                  single-line
+                  counter
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <!-- <template v-slot:item.iron="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.iron"
+              large
+              persistent
+              @save="save"
+              @cancel="cancel"
+              @open="open"
+              @close="close"
+            >
+              <div>{{ props.item.iron }}</div>
+              <template v-slot:input>
+                <div class="mt-4 title">Update Iron</div>
+              </template>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.iron"
+                  label="Edit"
+                  single-line
+                  counter
+                  autofocus
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template> -->
+        </v-data-table>
+      </v-cols>
+    </v-row>
+    <v-row justify="center">
+      <div class="bttn out cyann">
+        <span>
+          수정하기
+        </span>
+        <div class="corners top"></div>
+        <div class="corners bottom"></div>
       </div>
-      <div class="num">
-        <h3>
-          1111111111111111
-        </h3>
-      </div>
-      <div class="num">
-        <h3>
-          22222222
-        </h3>
-      </div>
-      <div class="num">
-        <h3>
-          333333333333
-        </h3>
-      </div>
-      <div class="num">
-        <h3>
-          444444444444
-        </h3>
-      </div>
-    </div>
-    <!-- <ul class="tilesWrap">
-	<li>
-		<h2>01</h2>
-		<h3>Title 1</h3>
-		<p>
-			Lorem Ipsum is simply dummy text of the printing and typesetting   
-			industry. Lorem Ipsum has been the industry's standard dummy text ever 
-			since the 1500s.
-		</p>
-		<button>Read more</button>
-	</li>
-	<li>
-		<h2>02</h2>
-		<h3>Title 2</h3>
-		<p>
-			When an unknown printer took a galley of type and scrambled it to make 
-			a type specimen book. It has survived not only five centuries.
-		</p>
-		<button>Read more</button>
-	</li>
-	<li>
-		<h2>03</h2>
-		<h3>Title 3</h3>
-		<p>
-			But also the leap into electronic typesetting, remaining essentially 
-			unchanged. It was popularised in the 1960s.
-		</p>
-		<button>Read more</button>
-	</li>
-	<li>
-		<h2>04</h2>
-		<h3>Title 4</h3>
-		<p>
-			With the release of Letraset sheets containing Lorem Ipsum passages,  
-			and more recently with desktop publishing software like Aldus PageMaker 
-			including versions of Lorem Ipsum.
-		</p>
-		<button>Read more</button>
-	</li>
-</ul> -->
+    </v-row>
   </v-container>
 </template>
 
@@ -83,15 +113,44 @@
 
   @Component
   export default class Account extends Vue {
-    private userName = 'SSA인'
+    private userName = 'SSA인';
+    private userContact = '010-1234-5678';
+    private userAddress = '대전시 유성구 전민동';
+    private averagePoint = 5;
+    private contractProgress = 1;
+    private contractComplete = 10;
+    private snack = false;
+    private snackColor = '';
+    private snackText = '';
+    private accountSetting: string[] = [
+      'SSA인', '010-1234-5678', '대전시 유성구 전민동'
+    ]
+    public save(): void {
+      this.snack = true
+      this.snackColor = 'success'
+      this.snackText = 'Data saved'
+    }
+    public cancel(): void {
+      this.snack = true
+      this.snackColor = 'error'
+      this.snackText = 'Canceled'
+    }
+    public open(): void {
+      this.snack = true
+      this.snackColor = 'info'
+      this.snackText = 'Dialog opened'
+    }
+    public close(): void {
+      console.log('Dialog closed')
+    }
   }
 </script>
 
 <style lang="scss" scoped>
-$lists: '이메일', '비밀번호', '연락처', '주소';
+$lists: '비밀번호', '이름', '연락처', '주소', '평균 평점', '진행 거래', '완료 거래';
 .container {
   padding: 2rem;
-  .list {
+  .attrs {
     .num {
       padding: 0.5rem 2rem;
       display: flex;
@@ -103,169 +162,228 @@ $lists: '이메일', '비밀번호', '연락처', '주소';
         &:nth-child(#{$i}) {
           &:before {
             content: '' + #{$val} + '';
-            font-size: 4rem;
-            font-weight: bold;
+            font-family: 'ON-IGothic'; 
+            font-size: 1.5rem;
+            font-weight: 900;
+            background-image: linear-gradient(to bottom, rgb(230, 155, 85), rgb(178, 108, 185), rgb(65, 166, 173));
+            background-attachment: fixed;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             color: black;
-            width: 16rem;
-            opacity: 0.05;
+            width: 40%;
+            // opacity: 0.7;
             transition: 0.25s;
           }
-          &:hover {
-            &:before {
-              content: '수정하기';
-              font-size: 4rem;
-              width: 16rem;
-              position: relative;
-            }
-          
+        &:hover:not(:nth-child(n+5)) {
+          &:before {
+            content: '수정하기';
+            position: relative;
+            // opacity: 0.9;
+          }
         }
         }
       }
       h3 {
         position: relative;
-        left: -1.5rem;
+        left: -1rem;
         color: #3d3d3d;
-        font-size: 0.85rem;
         transition: 0.25s;
       }
       &:hover {
         background-color: #fafafa;
         cursor: pointer;
         &:before {
-          opacity: 0.2;
+          // opacity: 0.7;
         }
         h3 {
           left: 1rem;
         }
         
       }
+      input {
+        position: relative;
+        // left: 3rem;
+        transition: 0.25s;
+        border-bottom: 1px solid black;
+      }
+      &:hover {
+        background-color: #fafafa;
+        cursor: pointer;
+        &:before {
+          // opacity: 0.7;
+        }
+        input {
+        }
+        
+      }
+    }
+    
+  }
+}
+.num + .num {
+  // border-top: 1px solid rgba(197, 197, 197, 0.9);
+}
+
+
+// settings
+$text-color: #FFB902;
+$line-color: #FFB902;
+$line-size: 7;
+
+//
+//  Corners mixin (MAGIC BE HERE!)
+//
+@mixin line-corners($line-color: cyan, $line-size: 7, $line-type: out, $line-distance: 20) {
+  position: absolute;
+  width: 100%;
+  
+  transition-duration: 0.3s;
+  
+  // arrows
+  &:before,
+  &:after {
+    content: '';
+    
+    position: absolute;
+    
+    width: $line-size + px;
+    height: $line-size + px;
+    
+    border-color: $line-color;
+    border-style: solid;
+    
+    transition-duration: 0.3s;
+    transform: translateZ(0);
+  }
+  
+  // top corners
+  &.top {
+    &:before { border-width: 1px 0 0 1px; }
+    &:after { border-width: 1px 1px 0 0; }
+  }
+  
+  // bottom corners
+  &.bottom {
+    &:before { border-width: 0 0 1px 1px; }
+    &:after { border-width: 0 1px 1px 0; }
+  }
+  
+  @if $line-type == out {
+    &:before { left: 0; }
+    &:after { right: 0; }
+    &.top { top: 0; }
+    &.bottom { bottom: $line-size + px; }    
+  }
+  
+  @if $line-type == in {
+    &:before { left: $line-distance + px; }
+    &:after { right: $line-distance + px; }
+    &.top { top: $line-distance + px; }
+    &.bottom { bottom: ($line-distance + $line-size) + px; }
+  }
+}
+
+@mixin line-corners-hover($line-size: 7, $line-type: out, $line-distance: 6) {
+  @if $line-type == out {
+    &:before { left: 0; }
+    &:after { right: 0; }
+    &.top { top: 0; }
+    &.bottom { bottom: $line-size + px; }
+  }
+  
+  @if $line-type == in {
+    &:before { left: $line-distance + px; }
+    &:after { right: $line-distance + px; }
+    &.top { top: $line-distance + px; }
+    &.bottom { bottom: ($line-distance + $line-size) + px; }
+  }
+}
+
+// style: borders out (edge)
+@mixin line-corners-out($line-color: cyan, $line-size: 7) {
+  .corners { @include line-corners($line-color, $line-size, out); }
+  &:hover {
+    .corners { @include line-corners-hover($line-size, in); }
+  }
+}
+  
+// style: borders in
+@mixin line-corners-in($line-color: cyan, $line-size: 7) {
+  .corners { @include line-corners($line-color, $line-size, in); }
+  &:hover {
+    .corners { @include line-corners-hover($line-size, out); }
+  }
+}
+//
+// @end: Corners mixin
+//
+
+//
+// magic buttons
+//
+.bttn {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  
+  margin: 20px;
+
+  // text
+  span {
+    display: block;
+    padding: 10px;
+    font-family: 'ON-IGothic'; 
+    font-size: 20px;
+    font-weight: 900;
+    color: $text-color;
+    text-transform: uppercase;
+
+    transition: all 0.3s ease-out;
+  }
+  
+  &:hover {
+    cursor: pointer;
+  }
+  
+  // include corners
+  &.out {
+    @include line-corners-out(cyan);
+  }
+  
+  &.in {
+    @include line-corners-in($line-color);
+  }
+}
+
+.bttn {
+  //opacity: 0;
+
+  //will-change: transform, opacity;
+  //animation: fadeIn 0.6s 0.5s forwards ease-out;
+  
+  // cyan theme
+  &.cyann {
+    $theme-color: rgb(63, 9, 58);
+    span { color: $theme-color; }
+    .corners {
+      &:after,
+      &:before { border-color: $theme-color; }
     }
   }
 }
 
-
-// .tilesWrap {
-// 	padding: 0;
-// 	margin: 50px auto;
-// 	list-style: none;
-// 	text-align: center;
-// }
-// .tilesWrap li {
-// 	display: inline-block;
-// 	width: 20%;
-// 	min-width: 200px;
-// 	max-width: 230px;
-// 	padding: 80px 20px 40px;
-// 	position: relative;
-// 	vertical-align: top;
-// 	margin: 10px;
-// 	font-family: 'helvetica', san-serif;
-// 	min-height: 25vh;
-// 	background: #262a2b;
-// 	border: 1px solid #252727;
-// 	text-align: left;
-// }
-// .tilesWrap li h2 {
-// 	font-size: 114px;
-// 	margin: 0;
-// 	position: absolute;
-// 	opacity: 0.2;
-// 	top: 50px;
-// 	right: 10px;
-// 	transition: all 0.3s ease-in-out;
-// }
-// .tilesWrap li h3 {
-// 	font-size: 20px;
-// 	color: #b7b7b7;
-// 	margin-bottom: 5px;
-// }
-// .tilesWrap li p {
-// 	font-size: 16px;
-// 	line-height: 18px;
-// 	color: #b7b7b7;
-// 	margin-top: 5px;
-// }
-// .tilesWrap li button {
-// 	background: transparent;
-// 	border: 1px solid #b7b7b7;
-// 	padding: 10px 20px;
-// 	color: #b7b7b7;
-// 	border-radius: 3px;
-// 	position: relative;
-// 	transition: all 0.3s ease-in-out;
-// 	transform: translateY(-40px);
-// 	opacity: 0;
-// 	cursor: pointer;
-// 	overflow: hidden;
-// }
-// .tilesWrap li button:before {
-// 	content: '';
-// 	position: absolute;
-// 	height: 100%;
-// 	width: 120%;
-// 	background: #b7b7b7;
-// 	top: 0;
-// 	opacity: 0;
-// 	left: -140px;
-// 	border-radius: 0 20px 20px 0;
-// 	z-index: -1;
-// 	transition: all 0.3s ease-in-out;
-	
-// }
-// .tilesWrap li:hover button {
-// 	transform: translateY(5px);
-// 	opacity: 1;
-// }
-// .tilesWrap li button:hover {
-// 	color: #262a2b;
-// }
-// .tilesWrap li button:hover:before {
-// 	left: 0;
-// 	opacity: 1;
-// }
-// .tilesWrap li:hover h2 {
-// 	top: 0px;
-// 	opacity: 0.6;
-// }
-
-// .tilesWrap li:before {
-// 	content: '';
-// 	position: absolute;
-// 	top: -2px;
-// 	left: -2px;
-// 	right: -2px;
-// 	bottom: -2px;
-// 	z-index: -1;
-// 	background: #fff;
-// 	transform: skew(2deg, 2deg);
-// }
-// .tilesWrap li:after {
-// 	content: '';
-// 	position: absolute;
-// 	width: 40%;
-// 	height: 100%;
-// 	left: 0;
-// 	top: 0;
-// 	background: rgba(255, 255, 255, 0.02);
-// }
-// .tilesWrap li:nth-child(1):before {
-// 	background: #C9FFBF;
-// background: -webkit-linear-gradient(to right, #FFAFBD, #C9FFBF);
-// background: linear-gradient(to right, #FFAFBD, #C9FFBF);
-// }
-// .tilesWrap li:nth-child(2):before {
-// 	background: #f2709c;
-// background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-// background: linear-gradient(to right, #ff9472, #f2709c);
-// }
-// .tilesWrap li:nth-child(3):before {
-// 	background: #c21500;
-// background: -webkit-linear-gradient(to right, #ffc500, #c21500);
-// background: linear-gradient(to right, #ffc500, #c21500);
-// }
-// .tilesWrap li:nth-child(4):before {
-// 	background: #FC354C;
-// background: -webkit-linear-gradient(to right, #0ABFBC, #FC354C);
-// background: linear-gradient(to right, #0ABFBC, #FC354C);
-// }
+//
+//  Animations
+//
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
 </style>

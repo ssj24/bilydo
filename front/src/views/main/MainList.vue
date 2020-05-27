@@ -180,7 +180,7 @@
   font-weight: 600;
   text-align: center;
   border-top-left-radius: 3px;
-  background: #f9eaff;
+  background: #fff8cf;
   box-shadow: 1px 1px 1px rgb(235, 235, 235);
 }
 .ribbon2:before {
@@ -188,7 +188,7 @@
   width: 0;
   right: -5.5px;
   top: 0.1px;
-  border-bottom: 8px solid #8c28b4;
+  border-bottom: 8px solid #FFEC81;
   border-right: 6px solid transparent;
 }
 .ribbon2:before, .ribbon2:after {
@@ -200,8 +200,8 @@
   width: 0;
   bottom: -29.5px;
   left: 0;
-  border-left: 35px solid #f9eaff;
-  border-right: 35px solid #f9eaff;
+  border-left: 35px solid #fff8cf;
+  border-right: 35px solid #fff8cf;
   border-bottom: 30px solid transparent;
   box-shadow: 2px 0px 1px -1px rgb(235, 235, 235);
 }
@@ -216,7 +216,7 @@
   top: 20px;
   font-size: 1.1em;
   font-weight: 600;
-  background: #ffdfee;
+  background: #f9eaff;
   // border-bottom: 2px dashed #df4c73;
   // box-shadow: 1px 1px 1px rgb(235, 235, 235);
 }
@@ -229,7 +229,7 @@
   width: 0;
   top: -8.5px;
   left: 0.1px;
-  border-bottom: 9px solid #df4c73;
+  border-bottom: 9px solid #8c28b4;
   border-left: 9px solid transparent;
 }
 .ribbon3:after {
@@ -238,7 +238,7 @@
   right: -14.5px;
   border-top: 25px solid transparent;
   border-bottom: 25px solid transparent;
-  border-left: 15px solid #ffdfee;
+  border-left: 15px solid #f9eaff;
 }
 .ribbon4 {
   position: absolute;
