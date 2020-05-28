@@ -1,100 +1,127 @@
 <template>
   <v-container>
-    <h1 style="display: inline-block;">
-      {{userName}}
-    </h1>
-    <h3 style="display: inline-block;">님</h3>
-    <v-row>
+    <div style="text-align: right; margin-right: 1rem;">
+      <h2 style="font-family: 'ON-IGothic'; font-weight: 900; display: inline-block;">
+        {{userName}}
+      </h2>
+      <h3 style="font-family: 'ON-IGothic'; display: inline-block;">님의 정보</h3>
+    </div>
+    
+    <v-row justify="center">
       <v-col cols="12" sm="10" class="attrs">
-        
-        <div class="num">
-          <h3>
-            <input type="password" placeholder="password">
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{userName}}
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{userContact}}
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{userAddress}}
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{averagePoint}}
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{contractProgress}}
-          </h3>
-        </div>
-        <div class="num">
-          <h3>
-            {{contractComplete}}
-          </h3>
-        </div>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              비밀번호
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ userPassword }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="userPassword">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              이름
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ userName }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="userName">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              연락처
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ userContact }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="userContact">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              주소
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ userAddress }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="userAddress">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              평균 평점
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ averagePoint }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="averagePoint">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              진행 거래
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ contractProgress }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="contractProgress">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              완료 거래
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <h3 @click="appendInput($event.target)">
+              {{ contractComplete }}
+            </h3>
+            <div class="accountUpdateDisplay">
+              <input type="text" v-model="contractComplete">
+              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
+            </div>
+          </v-col>
+        </v-row>
       </v-col>
-    </v-row>
-    <v-row>
-      <v-cols>
-        <v-data-table
-          :items="accountSetting"
-          hide-default-footer
-        >
-          <template v-slot:item="props">
-            <v-edit-dialog
-              :return-value.sync="props.item"
-              @save="save"
-              @cancel="cancel"
-              @open="open"
-              @close="close"
-            > {{ props.item }}
-              <template v-slot:input>
-                <v-text-field
-                  v-model="props.item"
-                  label="Edit"
-                  single-line
-                  counter
-                ></v-text-field>
-              </template>
-            </v-edit-dialog>
-          </template>
-          <!-- <template v-slot:item.iron="props">
-            <v-edit-dialog
-              :return-value.sync="props.item.iron"
-              large
-              persistent
-              @save="save"
-              @cancel="cancel"
-              @open="open"
-              @close="close"
-            >
-              <div>{{ props.item.iron }}</div>
-              <template v-slot:input>
-                <div class="mt-4 title">Update Iron</div>
-              </template>
-              <template v-slot:input>
-                <v-text-field
-                  v-model="props.item.iron"
-                  label="Edit"
-                  single-line
-                  counter
-                  autofocus
-                ></v-text-field>
-              </template>
-            </v-edit-dialog>
-          </template> -->
-        </v-data-table>
-      </v-cols>
     </v-row>
     <v-row justify="center">
       <div class="bttn out cyann">
@@ -113,6 +140,7 @@
 
   @Component
   export default class Account extends Vue {
+    private userPassword = '********';
     private userName = 'SSA인';
     private userContact = '010-1234-5678';
     private userAddress = '대전시 유성구 전민동';
@@ -120,108 +148,96 @@
     private contractProgress = 1;
     private contractComplete = 10;
     private snack = false;
-    private snackColor = '';
-    private snackText = '';
-    private accountSetting: string[] = [
-      'SSA인', '010-1234-5678', '대전시 유성구 전민동'
-    ]
     public save(): void {
       this.snack = true
-      this.snackColor = 'success'
-      this.snackText = 'Data saved'
     }
     public cancel(): void {
       this.snack = true
-      this.snackColor = 'error'
-      this.snackText = 'Canceled'
     }
     public open(): void {
       this.snack = true
-      this.snackColor = 'info'
-      this.snackText = 'Dialog opened'
     }
     public close(): void {
       console.log('Dialog closed')
     }
+    public appendInput(target: HTMLElement): void {
+      const appendTarget: HTMLElement| null = target.parentElement;
+      appendTarget.firstChild.classList.add("accountUpdateDisplay")
+      appendTarget.lastChild.classList.remove("accountUpdateDisplay")
+    }
+    public closeInput(target: HTMLElement): void {
+      console.log(target)
+      const removeTarget = target.parentNode.parentNode as HTMLElement;
+      removeTarget.parentNode.firstChild.classList.remove("accountUpdateDisplay")
+      removeTarget.parentNode.lastChild.classList.add("accountUpdateDisplay")
+    }
   }
 </script>
 
-<style lang="scss" scoped>
-$lists: '비밀번호', '이름', '연락처', '주소', '평균 평점', '진행 거래', '완료 거래';
+<style lang="scss">
+.vBtn {
+  position: relative;
+  min-width: 50px !important;
+  padding: 0 !important;
+  span.v-btn__content {
+    height: 36px;
+  }
+}
+
 .container {
-  padding: 2rem;
   .attrs {
-    .num {
+    .accountTitle {
       padding: 0.5rem 2rem;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       transition: 0.25s;
-      @each $val in $lists {
-        $i: index($lists, $val);
+      @for $i from 1 through 10 {
         &:nth-child(#{$i}) {
-          &:before {
-            content: '' + #{$val} + '';
-            font-family: 'ON-IGothic'; 
-            font-size: 1.5rem;
-            font-weight: 900;
-            background-image: linear-gradient(to bottom, rgb(230, 155, 85), rgb(178, 108, 185), rgb(65, 166, 173));
-            background-attachment: fixed;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: black;
-            width: 40%;
-            // opacity: 0.7;
-            transition: 0.25s;
+          font-family: 'ON-IGothic'; 
+          font-size: 1.5rem;
+          font-weight: 900;
+          background-image: linear-gradient(to bottom, rgb(230, 155, 85), rgb(178, 108, 185), rgb(65, 166, 173));
+          background-attachment: fixed;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: black;
+          // opacity: 0.7;
+          transition: 0.25s;
           }
-        &:hover:not(:nth-child(n+5)) {
-          &:before {
-            content: '수정하기';
-            position: relative;
-            // opacity: 0.9;
-          }
-        }
-        }
       }
       h3 {
         position: relative;
-        left: -1rem;
         color: #3d3d3d;
         transition: 0.25s;
-      }
-      &:hover {
-        background-color: #fafafa;
         cursor: pointer;
-        &:before {
-          // opacity: 0.7;
-        }
-        h3 {
-          left: 1rem;
-        }
-        
       }
       input {
         position: relative;
+        margin-right: 1.5rem;
         // left: 3rem;
         transition: 0.25s;
         border-bottom: 1px solid black;
       }
       &:hover {
         background-color: #fafafa;
-        cursor: pointer;
         &:before {
           // opacity: 0.7;
         }
+        h3 {
+        }
         input {
         }
-        
       }
     }
     
   }
 }
-.num + .num {
+.accountTitle + .accountTitle {
   // border-top: 1px solid rgba(197, 197, 197, 0.9);
+}
+.accountUpdateDisplay {
+  display: none;
 }
 
 
