@@ -8,16 +8,25 @@
         height="70"
         class="navBar"
       >
-        <v-toolbar-title>
+        <v-toolbar-title @click="listOn">
           <router-link to="/" class="navTitle">
             빌리도
           </router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
+        
         <v-btn icon 
           style="color: black; font-size: 1em; font-weight: 600; margin-right: 20px;"
+          @click="listOff"
         >
           둘러보기
+        </v-btn>
+        <v-btn icon 
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+        >
+          <router-link to="/article">
+            새 글
+          </router-link>
         </v-btn>
         <v-btn icon 
           v-if="true" 
@@ -27,9 +36,10 @@
             로그인
           </router-link>
         </v-btn>
-        <v-btn icon v-else style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
-          <router-link to="">
-            마이페이지
+        <!-- <v-btn icon v-else style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"> -->
+        <v-btn icon style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
+          <router-link to="/account">
+            이름
           </router-link>
         </v-btn>
       </v-app-bar>
@@ -41,18 +51,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Vue } from 'vue-property-decorator'
 
-export default Vue.extend({
-  name: 'App',
-
-  components: {
-  },
-
-  data: () => ({
-    //
-  }),
-});
+@Component
+export default class App extends Vue{
+  public listOn(): void {
+    this.$store.commit('listOn');
+  }
+  public listOff(): void {
+    this.$store.commit('listOff');
+  }
+}
 </script>
 <style lang="scss">
 .navBar {

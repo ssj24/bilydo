@@ -80,13 +80,7 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
-              {{ averagePoint }}
-            </h3>
-            <div class="accountUpdateDisplay">
-              <input type="text" v-model="averagePoint">
-              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
-            </div>
+            {{averagePoint}}
           </v-col>
         </v-row>
         <v-row align="center">
@@ -96,13 +90,42 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
-              {{ contractProgress }}
-            </h3>
-            <div class="accountUpdateDisplay">
-              <input type="text" v-model="contractProgress">
-              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
-            </div>
+            <v-btn
+              color="#8c28b4"
+              dark
+              @click.stop="dialogPro = true"
+            >
+              {{contractProgress.length}}
+            </v-btn>
+
+            <v-dialog
+              v-model="dialogPro"
+              max-width="80%"
+            >
+              <v-card>
+                <v-card-title class="modalTitle">
+                  {{userName}}님의 진행 중인 거래 {{contractProgress.length}}건
+                </v-card-title>
+
+                <v-card-text v-for="(cont, i) in contractProgress" :key="i">
+                  <a :href="cont.path">
+                    {{cont.name}}
+                  </a>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn
+                    color="#8c28b4"
+                    text
+                    @click="dialogPro = false"
+                  >
+                    확인
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -112,13 +135,42 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
-              {{ contractComplete }}
-            </h3>
-            <div class="accountUpdateDisplay">
-              <input type="text" v-model="contractComplete">
-              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
-            </div>
+            <v-btn
+              color="#8c28b4"
+              dark
+              @click.stop="dialogCom = true"
+            >
+              {{contractComplete.length}}
+            </v-btn>
+
+            <v-dialog
+              v-model="dialogCom"
+              max-width="80%"
+            >
+              <v-card>
+                <v-card-title class="modalTitle">
+                  {{userName}}님의 완료된 거래 {{contractComplete.length}}건
+                </v-card-title>
+
+                <v-card-text v-for="(cont, i) in contractComplete" :key="i">
+                  <a :href="cont.path">
+                    {{cont.name}}
+                  </a>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn
+                    color="#8c28b4"
+                    outlined
+                    @click="dialogCom = false"
+                  >
+                    확인
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
       </v-col>
@@ -145,21 +197,33 @@
     private userContact = '010-1234-5678';
     private userAddress = '대전시 유성구 전민동';
     private averagePoint = 5;
-    private contractProgress = 1;
-    private contractComplete = 10;
-    private snack = false;
-    public save(): void {
-      this.snack = true
-    }
-    public cancel(): void {
-      this.snack = true
-    }
-    public open(): void {
-      this.snack = true
-    }
-    public close(): void {
-      console.log('Dialog closed')
-    }
+    private contractProgress: object[] = [
+      {
+        name: '1',
+        path: '/',
+      }
+    ];
+    private contractComplete: object[] = [
+      {
+        name: '1',
+        path: '/',
+      },
+      {
+        name: '2',
+        path: '/',
+      },
+      {
+        name: '3',
+        path: '/',
+      },
+      {
+        name: '4',
+        path: '/',
+      },
+    ];
+    private dialogPro = false;
+    private dialogCom = false;
+
     public appendInput(target: HTMLElement): void {
       const appendTarget: HTMLElement| null = target.parentElement;
       appendTarget.firstChild.classList.add("accountUpdateDisplay")
@@ -183,7 +247,10 @@
     height: 36px;
   }
 }
-
+.contractCol {
+  color: #000 !important;
+  font-weight: 900;
+}
 .container {
   .attrs {
     .accountTitle {
@@ -240,6 +307,9 @@
   display: none;
 }
 
+.modalTitle {
+  text-shadow: 0px 0px 1px #888;
+}
 
 // settings
 $text-color: #FFB902;
