@@ -4,7 +4,7 @@
       <v-col cols="8" class="searchBar">
         <v-select
           :items="categories"
-          label="Category"
+          label="카테고리"
           color="#8c28b4"
         ></v-select>
         <input type="text" class="searchInput">
@@ -13,7 +13,7 @@
         </button>
       </v-col>
     </v-row>
-    <span v-if="showMain">
+    <span v-if="$store.state.mainList">
       <MainList :regionBoards="regionBoards" :recentBoards="recentBoards"></MainList>
     </span>
     <span v-else>
@@ -35,7 +35,6 @@
     }
   })
   export default class Main extends Vue {
-    private showMain = true;
     private categories: string[] = [
       "전자기기",
       "화장품",
@@ -108,15 +107,13 @@
         pic: "https://cdn.vuetifyjs.com/images/cards/plane.jpg"
       },
     ];
-    public search(): boolean {
-      return this.showMain = false;      
+    public search(): void {
+      this.$store.commit('listOff');
     }
   }
 </script>
 
 <style lang="scss">
-.searchBar {
-}
 .searchBar .v-select {
   display: inline-block;
   width: 150px;

@@ -3,6 +3,8 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Main from "@/views/main/Main.vue";
 import Signup from "@/views/user/Signup.vue";
 import Account from "@/views/user/Account.vue";
+import Article from "@/views/board/Article.vue";
+import Detail from "@/views/board/Detail.vue";
 // import cookie from "@/cookie";
 
 Vue.use(VueRouter);
@@ -22,6 +24,16 @@ const routes: Array<RouteConfig> = [
     path: "/account",
     name: "Account",
     component: Account
+  },
+  {
+    path: "/article",
+    name: "Article",
+    component: Article
+  },
+  {
+    path: "/detail",
+    name: "Detail",
+    component: Detail
   },
 ];
 
