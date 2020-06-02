@@ -27,7 +27,7 @@
   import "@/assets/css/basic.css"
   import MainList from "@/views/main/MainList.vue"
   import Result from "@/views/board/Result.vue"
-  
+
   @Component({
     components: {
       MainList,

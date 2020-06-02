@@ -210,7 +210,6 @@
     }
     public onFileChange(e: Event): void {
       const files = e.target.files;
-      console.log(files)
       for (let i = 0; i < files.length; i++) {
         this.images.push(files[i]);
       }
@@ -238,6 +237,7 @@
 }
   .container {
     margin-top: 50px;
+    margin-bottom: 50px;
   }
   .articleMain {
     padding-top: 40px !important;
@@ -281,7 +281,6 @@
       content: ' ';
       background-image: url('../../assets/images/tape.png');
       background-size: cover;
-      z-index: 100;
       width: 150px;
       height: 70px;
       position: absolute;
