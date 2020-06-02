@@ -117,8 +117,7 @@
             <div>
               <div v-for="(image, key) in images" :key="key" id="preview" style="display: inline-block;">
                 <div class="imageMain">
-                  <img :ref="'image'" />
-                  <button @click.prevent="removeImage(key)" class="removeBtn">x</button>
+                  <img :ref="'image'" :id="'test' + key" />
                 </div>
               </div>
             </div>
@@ -192,21 +191,25 @@
     private priceMonth = 10000;
     private priceYear = 100000;
     private description = '진짜 좋아요 진짜 좋은데 설명할 방법이 없네';
-    private images: string[] = [];
+    private images: File[] = [];
     private dialog = false;
     
     public previewImg(): void {
       for (let i = 0; i < this.images.length; i++) {
         const reader = new FileReader();
         reader.onload = () => {
-          this.$refs.image[i].src = reader.result;
+          const test = document.getElementById("test"+i)
+          const result = reader.result;
+          if (test && result) {
+            if (typeof(result) != 'string') {
+              result.toString()
+            } else {
+              test.setAttribute('src', result) 
+            }
+          }
         }
         reader.readAsDataURL(this.images[i]);
       }
-    }
-    public removeImage(key: number): void {
-      this.images.splice(key, 1);
-      this.previewImg()
     }
   }
 </script>

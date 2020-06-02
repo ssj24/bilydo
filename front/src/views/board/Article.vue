@@ -159,10 +159,15 @@
           </v-col>
           <v-col cols="12" sm="9" class="articleContent">
             <div>
-              <input type="file" multiple @change="onFileChange" style="display: block; margin-bottom: 10px;"/>
+              <input 
+                type="file" 
+                multiple 
+                @change="onFileChange($event.target)"
+                accept="image/*" 
+                style="display: block; margin-bottom: 10px;"/>
               <div v-for="(image, key) in images" :key="key" id="preview" style="display: inline-block;">
                 <div class="imageMain">
-                  <img :ref="'image'" />
+                  <img :ref="'image'" :id="'test' + key" />
                   <button @click.prevent="removeImage(key)" class="removeBtn">x</button>
                 </div>
               </div>
@@ -197,25 +202,35 @@
     private priceMonth = 0;
     private priceYear = 0;
     private description = '';
-    private images: string[] = [];
+    private images: File[] = [];
     
     public previewImg(): void {
       for (let i = 0; i < this.images.length; i++) {
         const reader = new FileReader();
         reader.onload = () => {
-          this.$refs.image[i].src = reader.result;
+          const test = document.getElementById("test"+i)
+          const result = reader.result;
+          if (test && result) {
+            if (typeof(result) != 'string') {
+              result.toString()
+            } else {
+              test.setAttribute('src', result) 
+            }
+          }
         }
         reader.readAsDataURL(this.images[i]);
       }
     }
-    public onFileChange(e: Event): void {
-      const files = e.target.files;
-      for (let i = 0; i < files.length; i++) {
-        this.images.push(files[i]);
+    public onFileChange(target: HTMLInputElement): void {
+      const files = target.files;
+      if (files) {
+        for (let i = 0; i < files.length; i++) {
+          this.images.push(files[i]);
+        }
+        this.previewImg()
       }
-      this.previewImg()
-      
     }
+      
     public removeImage(key: number): void {
       this.images.splice(key, 1);
       this.previewImg()
