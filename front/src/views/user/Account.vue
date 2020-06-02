@@ -225,15 +225,22 @@
     private dialogCom = false;
 
     public appendInput(target: HTMLElement): void {
-      const appendTarget: HTMLElement| null = target.parentElement;
-      appendTarget.firstChild.classList.add("accountUpdateDisplay")
-      appendTarget.lastChild.classList.remove("accountUpdateDisplay")
+      const appendTarget: HTMLElement | null = target.parentElement;
+      if (appendTarget && appendTarget.firstElementChild && appendTarget.lastElementChild) {
+        appendTarget.firstElementChild.classList.add("accountUpdateDisplay")
+        appendTarget.lastElementChild.classList.remove("accountUpdateDisplay")
+      }
     }
     public closeInput(target: HTMLElement): void {
-      console.log(target)
-      const removeTarget = target.parentNode.parentNode as HTMLElement;
-      removeTarget.parentNode.firstChild.classList.remove("accountUpdateDisplay")
-      removeTarget.parentNode.lastChild.classList.add("accountUpdateDisplay")
+      const tempTarget: HTMLElement | null = target.parentElement;
+      
+      if (tempTarget) {
+        const removeTarget: HTMLElement | null = (tempTarget.parentElement as HTMLElement).parentElement;
+        if (removeTarget && removeTarget.firstElementChild && removeTarget.lastElementChild) {
+          removeTarget.firstElementChild.classList.remove("accountUpdateDisplay")
+          removeTarget.lastElementChild.classList.add("accountUpdateDisplay")
+        }
+      }
     }
   }
 </script>

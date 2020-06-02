@@ -1,9 +1,9 @@
 import axios from "axios";
-// import cookie from "@/cookie"
+import cookie from "@/cookie"
 
 export default axios.create({
-  baseURL: "https://localhost:8888/api",
-  // headers: {
-  //   "jwt_auth_token": cookie.token()
-  // }
+  baseURL: "http://13.125.209.188:8080/api",
+  headers: {
+    "jwt_auth_token": cookie.token()
+  }
 })

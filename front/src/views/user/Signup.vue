@@ -36,23 +36,53 @@
 								/>
 							<v-text-field
 								type="tel" 
-								class="input" 
+								class="input"
+								id="contactInput"
+								maxlength="13"
 								color="black"
-								pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
-								label="Contact" 
+								pattern="[\+]\d{2}[\(]\d{2}[\)]\d{4}[\-]\d{4}"
 								v-model="contact"
 								:rules="contactRules"
 								required
 								/>
-							<v-text-field
-								type="text" 
-								class="input" 
-								color="black"
-								label="Address" 
-								v-model="address"
-								:rules="addressRules"
-								required
-								/>
+							<v-row>
+								<v-col cols="6" sm="4">
+
+									<v-text-field
+									type="text" 
+									class="input" 
+									color="black"
+									label="00시" 
+									v-model="addressCity"
+									:rules="addressRules"
+									required
+									/>
+								</v-col>
+								<v-col cols="6" sm="4">
+
+									<v-text-field
+									type="text" 
+									class="input" 
+									color="black"
+									label="00구" 
+									v-model="addressGu"
+									:rules="addressRules"
+									required
+									/>
+								</v-col>
+								<v-col cols="6" sm="4" class="dongInput">
+
+									<v-text-field
+									type="text" 
+									class="input" 
+									color="black"
+									label="00동" 
+									v-model="addressDong"
+									:rules="addressRules"
+									required
+									/>
+								</v-col>
+							</v-row>
 						</div>
 						<button class="submit-btn" @click="signup">Sign up</button>
 					</div>
@@ -93,6 +123,8 @@
 
 <script>
 	import * as EmailValidator from 'email-validator'
+	import baseURL from "@/base-url"
+	import cookie from "@/cookie"
 
 	export default {
 		data: () => ({
@@ -116,9 +148,11 @@
 			contactRules: [
 				v => !!v || '연락처를 입력해주세요'
 			],
-			address: '',
+			addressCity: '',
+			addressGu: '',
+			addressDong: '',
 			addressRules: [
-				v => !!v || '주소를 입력해주세요'
+				v => !!v || '입력해주세요'
 			],
 			loginId: '',
 			loginEmailRules: [
@@ -132,8 +166,6 @@
       ],
 		}),
 		mounted() {
-			console.clear();
-
 			const loginBtn = document.getElementById('login');
 			const signupBtn = document.getElementById('signup');
 
@@ -160,19 +192,63 @@
 					}
 				});
 			});
+
+			document.getElementById('contactInput').addEventListener('input', function (e) {
+				const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,4})(\d{0,4})/);
+				e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
+			});
 		},
 		methods: {
 			signup() {
-				this.$refs.signupForm.validate()
+				if (this.$refs.signupForm.validate()) {
+					const data = {
+						email: this.email,
+						location: this.addressCity + '시 ' + this.addressGu + '구 ' + this.addressDong + '동',
+						name: this.name,
+						password: this.password,
+						phone: this.contact
+					}
+					baseURL.post('signup', data)
+						.then(() => {
+							this.$router.push({
+								name: "Main"
+							})
+						})
+						.catch(() => {
+							alert("잘못된 시도입니다.")
+						})
+				}
 			},
 			login() {
-				this.$refs.loginForm.validate()
+				if (this.$refs.loginForm.validate()) {
+					const data = {
+						email: this.loginId,
+						password: this.loginPw
+					}
+					baseURL.post('signin', data)
+						.then(res => {
+							const loginData = {
+								token: res.data,
+								id: res.data,
+								location: res.data,
+								name: res.data,
+								password: res.data,
+								phone: res.data
+							}
+							cookie.setCookie(loginData);
+							this.$store.commit('startLogin', loginData)
+              this.$store.commit('isLogin')
+              this.$router.push({
+                name: "Main"
+              })
+						})
+				}
 			}
 		}
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .signup-wrapper {
 	width: 100%;
@@ -186,7 +262,7 @@
 	border-bottom: none;
 	// border: 2px solid #df4c73;
 	border-radius: 15px;
-	height: 600px;
+	height: 680px;
 	// width: 350px;
 	position: relative;
 	overflow: hidden;
@@ -208,7 +284,7 @@
 		left: 50%;
 		-webkit-transform: translate(-50%, -50%);
 		width: 65%;
-		z-index: 5;
+		z-index: 1;
 		-webkit-transition: all .3s ease;
 		
 		
@@ -252,7 +328,8 @@
 		.form-holder {
 			border-radius: 15px;
 			background-color: rgba(255, 255, 255, 0.301);
-			height: 300px;
+			min-height: 300px;
+			max-height: 400px;
 			overflow: hidden;
 			margin-top: 50px;
 			opacity: 1;
@@ -277,6 +354,12 @@
 				}
 				&::-webkit-input-placeholder {
 					color: rgba(0,0,0,0.4);
+				}
+			}
+			.row {
+				padding: 8px 15px !important;
+				.col-6 {
+					padding: 0 !important;
 				}
 			}
 		}
