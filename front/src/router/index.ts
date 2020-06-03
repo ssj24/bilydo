@@ -5,7 +5,7 @@ import Signup from "@/views/user/Signup.vue";
 import Account from "@/views/user/Account.vue";
 import Article from "@/views/board/Article.vue";
 import Detail from "@/views/board/Detail.vue";
-// import cookie from "@/cookie";
+import cookie from "@/cookie";
 
 Vue.use(VueRouter);
 
@@ -39,29 +39,29 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
   mode: "history",
-  routes
+  routes,
+  scrollBehavior() {
+    return {x: 0, y: 0}
+  }
 });
 
-// router.beforeEach((to, from, next) => {
-  // if (cookie.cookieAuth() == 0 && to.name != 'Admin' && to.name != 'Login') {
-  //   return next('admin')
-  // }
-  // if (cookie.getCookie()) {
-  //   if (to.meta.loginRequire === false) {
-  //     if (from.name === null) {
-  //       return next("Main");
-  //     } else {
-  //       return next(false);
-  //     }
-  //   }
-  //   next();
-  // } else {
-  //   if (to.meta.loginRequire === true) {
-  //     alert("로그인 해주세요");
-  //     return next("/");
-  //   }
-  //   return next();
-  // }
-// });
+router.beforeEach((to, from, next) => {
+  if (cookie.getCookie()) {
+    if (to.meta.loginRequire === false) {
+      if (from.name === null) {
+        return next("Main");
+      } else {
+        return next(false);
+      }
+    }
+    next();
+  } else {
+    if (to.meta.loginRequire === true) {
+      alert("로그인 해주세요");
+      return next("/");
+    }
+    return next();
+  }
+});
 
 export default router;

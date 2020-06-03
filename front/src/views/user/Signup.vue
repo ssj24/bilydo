@@ -208,11 +208,9 @@
 						password: this.password,
 						phone: this.contact
 					}
-					baseURL.post('signup', data)
+					baseURL.post('/signup', data)
 						.then(() => {
-							this.$router.push({
-								name: "Main"
-							})
+							alert("빌리도의 회원이 되셨습니다.")
 						})
 						.catch(() => {
 							alert("잘못된 시도입니다.")
@@ -225,22 +223,30 @@
 						email: this.loginId,
 						password: this.loginPw
 					}
-					baseURL.post('signin', data)
-						.then(res => {
-							const loginData = {
-								token: res.data,
-								id: res.data,
-								location: res.data,
-								name: res.data,
-								password: res.data,
-								phone: res.data
-							}
-							cookie.setCookie(loginData);
-							this.$store.commit('startLogin', loginData)
-              this.$store.commit('isLogin')
-              this.$router.push({
-                name: "Main"
-              })
+					baseURL.post('/signin', data)
+						.then(response => {
+							const access = {headers: {"X-AUTH-TOKEN": response.data.accessToken}}
+							baseURL('/users/user', access)
+								.then(res => {
+									console.log(res)
+									const loginData = {
+										token: response.data.accessToken,
+										id: res.data.id,
+										email: res.data.email,
+										name: res.data.name,
+										phone: res.data.phone,
+										location: res.data.location
+									}
+									cookie.setCookie(loginData);
+									this.$store.commit('loggedIn', loginData);
+									this.$store.commit('isLogin');
+									this.$router.push({
+										name: "Main"
+									})
+								})
+						})
+						.catch(() => {
+							alert("잘못된 시도입니다.")
 						})
 				}
 			}
