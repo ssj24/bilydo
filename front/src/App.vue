@@ -16,32 +16,51 @@
         <v-spacer></v-spacer>
         
         <v-btn icon 
-          style="color: black; font-size: 1em; font-weight: 600; margin-right: 20px;"
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
           @click="listOff"
         >
-          둘러보기
+          🔎
         </v-btn>
+        <span v-if="isLogin">
+
+          <v-btn icon 
+            style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+          >
+            <router-link to="/article">
+              ➕
+            </router-link>
+          </v-btn>
+          <v-btn icon 
+            @click="logout"
+            style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+          >
+            🔓
+          </v-btn>
+          <v-btn icon style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
+            <v-badge
+              :content="$store.state.messages"
+              :value="$store.state.messages"
+              color="#FFEC81"
+              bordered
+              offset-x="8"
+              offset-y="15"
+            >
+              <router-link to="/account">
+                {{name}}
+              </router-link>
+            </v-badge>
+          </v-btn>
+          
+        </span>
         <v-btn icon 
-          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
-        >
-          <router-link to="/article">
-            새 글
-          </router-link>
-        </v-btn>
-        <v-btn icon 
-          v-if="true" 
+          v-else
           style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
         >
           <router-link to="/auth">
-            로그인
+            🔐
           </router-link>
         </v-btn>
-        <!-- <v-btn icon v-else style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"> -->
-        <v-btn icon style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
-          <router-link to="/account">
-            이름
-          </router-link>
-        </v-btn>
+        
       </v-app-bar>
     </v-card>
     <v-content class="content-wrapper">
@@ -52,14 +71,29 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import cookie from "@/cookie"
 
 @Component
 export default class App extends Vue{
+  private name = cookie.cookieName();
   public listOn(): void {
     this.$store.commit('listOn');
   }
   public listOff(): void {
     this.$store.commit('listOff');
+  }
+  public logout(): void {
+    this.$store.commit('loggedOut');
+    this.$store.commit('isLogout');
+    const date = new Date();
+    // Set it
+    document.cookie = "jwt_auth_token=" + "= " + "; expires=" + date.toUTCString() + "; path=/";
+    document.cookie = "user_id=" + "= " + "; expires=" + date.toUTCString() + "; path=/";
+    document.cookie = "user_name=" + "= " + "; expires=" + date.toUTCString() + "; path=/";
+    document.cookie = "user_location=" + "= " + "; expires=" + date.toUTCString() + "; path=/";
+  }
+  get isLogin() {
+    return this.$store.state.isLoggedIn;
   }
 }
 </script>
@@ -67,6 +101,17 @@ export default class App extends Vue{
 .navBar {
   border-top: 2px solid #8c28b4 !important;
   box-shadow: 1px 1px 1px #ccc !important;
+  .v-btn {
+    padding: 0;
+    span.v-btn__content {
+      height: 48px;
+      a {
+        line-height: 48px;
+        width: 48px;
+        height:48px;
+      }
+    }
+  }
 }
 a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navTitle {
   font-family: 'ON-IGothic'; 
@@ -75,4 +120,8 @@ a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navT
   font-size: 2em; 
   font-weight: bolder;
 }
+.v-badge__badge {
+  color: #000 !important;
+}
+
 </style>
