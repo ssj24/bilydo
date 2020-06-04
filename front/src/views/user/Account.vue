@@ -19,7 +19,7 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
+            <h3 @click="appendInput($event.target)" class="cursorE">
               {{ userPassword }}
             </h3>
             <div class="accountUpdateDisplay">
@@ -35,7 +35,7 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
+            <h3 @click="appendInput($event.target)" class="cursorE">
               {{ userName }}
             </h3>
             <div class="accountUpdateDisplay">
@@ -51,7 +51,7 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
+            <h3 @click="appendInput($event.target)" class="cursorE">
               {{ userContact }}
             </h3>
             <div class="accountUpdateDisplay">
@@ -67,7 +67,7 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)">
+            <h3 @click="appendInput($event.target)" class="cursorE">
               {{ userAddress }}
             </h3>
             <div class="accountUpdateDisplay">
@@ -83,7 +83,9 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            {{averagePoint}}
+            <span v-for="i in averagePoint" :key="i">
+              💖
+            </span>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -103,70 +105,121 @@
             >
               <v-btn
                 color="#8c28b4"
-                dark
+                outlined
                 @click="messagesReset"
                 @click.stop="dialogPro = true;"
               >
-                {{contractProgress.length}}
+                <span style="color: #000; font-size: 1.2em; font-weight: 900;">
+                  {{contractProgress.length}}
+                </span>
               </v-btn>
             </v-badge>
 
             <v-dialog
               v-model="dialogPro"
+              width="60%"
               max-width="80%"
-            >
-              <v-card>
+              >
+              <v-card class="contModal">
                 <v-card-title class="modalTitle">
-                  {{userName}}님의 진행 중인 거래 {{contractProgress.length}}건
+                  📖{{userName}}님의 진행 중인 거래 {{contractProgress.length}}건
                 </v-card-title>
+                <p style="text-align: end; margin-right: 20px;">
+                  <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
+                  <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
+                </p>
+                <v-card-text v-for="(cont, i) in contractProgress" :key="i" style="color: black; font-size: 1rem;">
+                  <v-row justify="center">
+                    <v-col cols="11" md="8">
+                      <v-row justify="center">
+                        <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
+                          <a :href="cont.path">
+                            {{cont.name}}
+                          </a>
+                        </v-col>
+                        <v-col cols="11" sm="3" class="d-flex justify-center align-center t-center">
+                          등록일(cont.date)
+                        </v-col>
+                        <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
+                          <v-btn
+                            color="#EFFDF8"
+                            @click.stop="showDialogReviewPro(cont)"
+                            v-if="cont.role == '제공자'" 
+                            class="distRolePro"
+                            style="font-weight: 900;"
+                          >
+                            {{cont.state}}
+                          </v-btn>
+                          <v-btn
+                            color="#F9FDEF"
+                            @click.stop="showDialogReviewPro(cont)"
+                            v-else class="distRoleBo"
+                            style="font-weight: 900;"
+                          >
+                            {{cont.state}}
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                        <hr style="background-color: #888; margin-top: 10px; border-radius: 50px;">  
 
-                <v-card-text v-for="(cont, i) in contractProgress" :key="i">
-                  <a :href="cont.path">
-                    {{cont.name}}
-                  </a>
-                  <v-btn
-                    color="#8c28b4"
-                    dark
-                    @click.stop="showDialogReviewPro(cont)"
-                  >
-                    리뷰 작성
-                  </v-btn>
-                  <v-dialog
-                    v-model="dialogReviewPro"
-                    max-width="80%"
-                  >
-                    <v-card>
-                      <v-card-title class="modalTitle">
-                        {{data.name}}에 대한 리뷰를 남겨주세요
-                      </v-card-title>
-
-                      <v-card-text>
-                        <a :href="data.path">
-                          {{data.name}}
-                        </a>
-                      </v-card-text>
-                      <input type="text">
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-
-                        <v-btn
-                          color="#8c28b4"
-                          outlined
-                          @click="dialogReviewPro = false"
-                        >
-                          확인
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+                    </v-col>
+                  </v-row>
                 </v-card-text>
+                <v-dialog
+                  v-model="dialogReviewPro"
+                  max-width="80%"
+                  >
+                  <v-card class="reviewModal">
+                    <v-card-title class="modalTitle">
+                      <a :href="data.path">[data.category]{{data.name}}</a> - data.state
+                    </v-card-title>
+
+                    <v-card-text style="color: #000; font-weight: 900;">
+                      <p v-if="data.role == '제공자'">⭕ 대여자 이름 - 연락처</p>
+                      <p v-else>⭕ 제공자 이름 - 연락처</p>
+                      <p>⭕ 대여신청시작일~대여신청종료일</p>
+                      <label for="finalprice" style="margin-right: 20px;">⭕ 최종 가격</label>
+                      <input 
+                        id="finalprice" 
+                        type="number" min=0 step="100" 
+                        v-model="data.price"
+                        style="border-bottom: 1px solid black; margin-bottom: 20px;"
+                      >
+                      <v-row justify="center">
+                        <v-btn
+                          color="#f66"
+                          outlined
+                          fab
+                          dark
+                          style="margin-right: 20px;"
+                          >
+                          <span style="color: #000; font-weight: 900; font-size: 1.1em;">
+                            거절
+                          </span>
+                        </v-btn>
+                        
+                        <v-btn
+                          color="green"
+                          outlined
+                          fab
+                          dark
+                          >
+                          <span style="color: #000; font-weight: 900; font-size: 1.1em;">
+                            수락
+                          </span>
+                        </v-btn>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
 
                   <v-btn
-                    color="#8c28b4"
-                    text
+                    color="#000"
+                    style="font-size: 1.05em; margin: 0 20px 20px;"
+                    outlined
                     @click="dialogPro = false"
                   >
                     확인
@@ -185,41 +238,71 @@
           <v-col cols="6" sm="8">
             <v-btn
               color="#8c28b4"
-              dark
+              outlined
               @click.stop="dialogCom = true"
             >
-              {{contractComplete.length}}
+              <span style="color: #000; font-size: 1.2em; font-weight: 900;">
+                {{contractComplete.length}}
+              </span>
+
             </v-btn>
 
             <v-dialog
               v-model="dialogCom"
               max-width="80%"
             >
-              <v-card>
+              <v-card class="contModal">
                 <v-card-title class="modalTitle">
-                  {{userName}}님의 완료된 거래 {{contractComplete.length}}건
+                  📚{{userName}}님의 완료된 거래 {{contractComplete.length}}건
                 </v-card-title>
-
-                <v-card-text v-for="(cont, i) in contractComplete" :key="i">
-                  <a :href="cont.path">
-                    {{cont.name}}
-                  </a>
-                  <v-btn
-                    color="#8c28b4"
-                    dark
-                    @click.stop="showDialogReview(cont)"
-                  >
-                    리뷰 작성
-                  </v-btn>
-                  
+                <p style="text-align: end; margin-right: 20px;">
+                  <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
+                  <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
+                </p>
+                <v-card-text v-for="(cont, i) in contractComplete" :key="i" style="color: black; font-size: 1rem;">
+                  <v-row justify="center">
+                    <v-col cols="11" md="8">
+                      <v-row justify="center">
+                        <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
+                          <a :href="cont.path">
+                            {{cont.name}}
+                          </a>
+                        </v-col>
+                        <v-col cols="11" sm="3" class="d-flex justify-center align-center t-center">
+                          대여 기간
+                        </v-col>
+                        <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
+                          <v-btn
+                            color="#EFFDF8"
+                            @click.stop="showDialogReview(cont)"
+                            v-if="cont.role == '제공자'" 
+                            class="distRolePro"
+                            style="font-weight: 900;"
+                          >
+                            리뷰 작성
+                          </v-btn>
+                          <v-btn
+                            color="#F9FDEF"
+                            @click.stop="showDialogReview(cont)"
+                            v-else class="distRoleBo"
+                            style="font-weight: 900;"
+                          >
+                            리뷰 작성
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <hr style="background-color: #888; margin-top: 10px; border-radius: 50px;">  
+                    </v-col>
+                  </v-row>
                 </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
 
                   <v-btn
-                    color="#8c28b4"
+                    color="#000"
                     outlined
+                    style="font-size: 1.05em; margin: 0 20px 20px;"
                     @click="dialogCom = false"
                   >
                     확인
@@ -233,7 +316,7 @@
     </v-row>
     <v-row justify="center">
       <div class="bttn out cyann">
-        <span>
+        <span @click="updateUser">
           수정하기
         </span>
         <div class="corners top"></div>
@@ -244,29 +327,28 @@
       v-model="dialogReview"
       max-width="80%"
     >
-      <v-card>
-        <v-card-title class="modalTitle">
-          {{data.name}}에 대한 리뷰를 남겨주세요
+      <v-card class="reviewModal">
+        <v-card-title class="modalTitle" 
+          v-if="data.role == '제공자'" >
+          <a :href="data.path">[data.category]{{data.name}}</a>에 대한 리뷰를 남겨주세요
+        </v-card-title>
+        <v-card-title class="modalTitle" v-else>
+          대여인!에 대한 리뷰를 남겨주세요
         </v-card-title>
         <!-- LIKE -->
-        <section id="like" class="heart">
-          <!-- FIFTH HEART -->
+        <!-- <section id="like" class="heart">
           <input type="radio" id="heart_5" name="like" value="5" />
           <label for="heart_5" title="Five">&#10084;</label>
-          <!-- FOURTH HEART -->
           <input type="radio" id="heart_4" name="like" value="4" />
           <label for="heart_4" title="Four">&#10084;</label>
-          <!-- THIRD HEART -->
           <input type="radio" id="heart_3" name="like" value="3" />
           <label for="heart_3" title="Three">&#10084;</label>
-          <!-- SECOND HEART -->
           <input type="radio" id="heart_2" name="like" value="2" />
           <label for="heart_2" title="Two">&#10084;</label>
-          <!-- FIRST HEART -->
           <input type="radio" id="heart_1" name="like" value="1" />
           <label for="heart_1" title="One">&#10084;</label>
-        </section>
-        <!-- <div class="starContainer">
+        </section> -->
+        <div class="starContainer">
           <div class="feedback">
             <div class="rating">
               <input type="radio" :name="'rating'+data.name" id="rating-5" value="5">
@@ -368,10 +450,9 @@
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
         <v-card-text>
-          <v-textarea v-model="review.review">
-            
+          <v-textarea v-model="review.review" color="#8c28b4" placeholder="간단한 후기를 작성해주세요.">
           </v-textarea>
         </v-card-text>
         <input type="text">
@@ -380,6 +461,7 @@
 
           <v-btn
             color="#8c28b4"
+            style="font-size: 1.05em; margin: 20px;"
             outlined
             @click="dialogReview = false; getChecked();"
           >
@@ -393,37 +475,70 @@
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
+  import cookie from "@/cookie" 
+  import baseUrl from '../../base-url';
 
   @Component
   export default class Account extends Vue {
-    private userPassword = '********';
+    private userPassword = '비밀번호 변경';
     private newPassword = '';
-    private userName = 'SSA인';
+    private userName = cookie.cookieName();
     private userContact = '010-1234-5678';
-    private userAddress = '대전시 유성구 전민동';
+    private userAddress = cookie.cookieLocation();
     private averagePoint = 5;
     private contractProgress: object[] = [
       {
-        name: '1',
+        name: '아이패드 6세대',
         path: '/',
         state: '대여 요청 중',
+        role: '제공자',
+        dateStart: '20200607',
+        dateEnd: '20200707',
+        price: 20000
+      },
+      {
+        name: '아이패드 6세대',
+        path: '/',
+        state: '대여 중',
+        role: '대여자',
+        dateStart: '20200607',
+        dateEnd: '20210607',
+        price: 200000
+      },
+      {
+        name: '아이패드 6세대',
+        path: '/',
+        state: '반납 완료',
+        role: '제공자',
+        dateStart: '20200607',
+        dateEnd: '20200807',
+        price: 10000
+      },
+      {
+        name: '아이패드 6세대아이패드 6세대아이패드 6세대',
+        path: '/',
+        state: '거래 완료',
+        role: '제공자',
+        dateStart: '20200907',
+        dateEnd: '20200912',
+        price: 3000
       }
     ];
     private contractComplete: object[] = [
       {
-        name: '1',
+        name: '아이패드 1세대',
         path: '/',
       },
       {
-        name: '2',
+        name: '아이패드 3세대',
         path: '/',
       },
       {
-        name: '3',
+        name: '아이패드 4세대',
         path: '/',
       },
       {
-        name: '4',
+        name: '아이패드 6세대',
         path: '/',
       },
     ];
@@ -436,7 +551,7 @@
         reviewer: '대여자',
         reviewee: '제공자',
         star: 1,
-        review: '후기'
+        review: ''
       };
 
     public appendInput(target: HTMLElement): void {
@@ -469,23 +584,48 @@
       this.$store.commit('messagesReset');
     }
     public getChecked(): void {
-      // const checkedV = document.getElementsByClassName('rating')[0].getElementsByTagName("input");
-      // for (let i = 0; i < checkedV.length; i++) {
-      //   if (checkedV[i].type === 'radio' && checkedV[i].checked) {
-      //     const cValue = checkedV[i].value;
-      //     console.log(cValue)
-      //     document.getElementsByClassName('rating')[0].getElementsByTagName("input")[i].checked=false;
-      //   }
-      // }
-      const heartV = document.getElementsByClassName('heart')[0].getElementsByTagName("input");
-      for (let i = 0; i < heartV.length; i++) {
-        if (heartV[i].type === 'radio' && heartV[i].checked) {
-          const hValue = heartV[i].value;
-          console.log(hValue)
-          document.getElementsByClassName('heart')[0].getElementsByTagName("input")[i].checked=false;
-          // this.review.review = '';
+      const checkedV = document.getElementsByClassName('rating')[0].getElementsByTagName("input");
+      for (let i = 0; i < checkedV.length; i++) {
+        if (checkedV[i].type === 'radio' && checkedV[i].checked) {
+          const cValue = checkedV[i].value;
+          console.log(cValue)
+          document.getElementsByClassName('rating')[0].getElementsByTagName("input")[i].checked=false;
         }
       }
+      // const heartV = document.getElementsByClassName('heart')[0].getElementsByTagName("input");
+      // for (let i = 0; i < heartV.length; i++) {
+      //   if (heartV[i].type === 'radio' && heartV[i].checked) {
+      //     const hValue = heartV[i].value;
+      //     console.log(hValue)
+      //     document.getElementsByClassName('heart')[0].getElementsByTagName("input")[i].checked=false;
+      //     // this.review.review = '';
+      //   }
+      // }
+    }
+    public updateUser(): void {
+      const data = {
+        id: cookie.cookieId(),
+        location: this.userAddress,
+        name: this.userName,
+        password: this.newPassword,
+        phone: this.userContact
+      }
+      baseUrl.put('/users', data)
+        .then(() => {
+          alert("정보 수정이 완료되었습니다.")
+        })
+        .catch(() => {
+          alert("잘못된 시도입니다.")
+        })
+    }
+    created() {
+      baseUrl('/users/user')
+      .then(res => {
+        this.userName = res.data.name;
+        this.newPassword = res.data.password;
+        this.userContact = res.data.phone;
+        this.userAddress = res.data.location;
+      })
     }
   }
 </script>
@@ -554,9 +694,48 @@
 .accountUpdateDisplay {
   display: none;
 }
+.cursorE {
+  cursor: pointer;
+}
 
 .modalTitle {
   text-shadow: 0px 0px 1px #888;
+}
+.t-center {
+  text-align: center;
+}
+.v-overlay__scrim {
+  background-color: #fff !important;
+}
+.contModal {
+  border: solid #fff9d6 !important;
+}
+.reviewModal {
+  // background-color:rgb(252, 252, 237) !important;
+  border-top: 5px solid #8905e0 !important;
+  // border-bottom: 5px solid #b695cc !important;
+}
+
+@mixin borderGradient($from, $to, $weight: 0) {
+  $mix-main: mix($from, $to);
+  $mix-sub-from: mix($mix-main, $from);
+  $mix-sub-to: mix($mix-main, $to);
+  
+  box-shadow: 0 1px 0 $weight rgba($mix-sub-to, .25),
+              0 -1px 0 $weight rgba($mix-sub-from, .25),
+              1px 0 0 $weight rgba($mix-sub-to, .25),
+              -1px 0 0 $weight  rgba($mix-sub-from, .25),
+              1px -1px 0 $weight rgba($mix-main, .5),
+              -1px 1px 0 $weight rgba($mix-main, .5),
+              1px 1px 0 $weight rgba($to, .75),
+              -1px -1px 0 $weight rgba($from, .75);
+}
+
+/// BASIC EXAMPLE ///
+
+.circle {
+  border-radius: 100%;
+  border: borderGradient(red, yellow) !important;
 }
 
 // settings
@@ -726,162 +905,162 @@ $line-size: 7;
   align-items: center;
   justify-content: center;
   padding: 0 20px;
-}
+  }
 
-.rating {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  overflow: hidden;
-  flex-direction: row-reverse;
-  height: 150px;
-  position: relative;
-}
+  .rating {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    overflow: hidden;
+    flex-direction: row-reverse;
+    height: 150px;
+    position: relative;
+  }
 
-.rating-0 {
-  filter: grayscale(100%);
-}
+  .rating-0 {
+    filter: grayscale(100%);
+  }
 
-.rating > input {
-  display: none;
-}
+  .rating > input {
+    display: none;
+  }
 
-.rating > label {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  margin-top: auto;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23e3e3e3' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 76%;
-  transition: .3s;
-}
+  .rating > label {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    margin-top: auto;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23e3e3e3' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 76%;
+    transition: .3s;
+  }
 
-.rating > input:checked ~ label,
-.rating > input:checked ~ label ~ label {
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23fcd93a' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
-}
+  .rating > input:checked ~ label,
+  .rating > input:checked ~ label ~ label {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23fcd93a' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+  }
 
 
-.rating > input:not(:checked) ~ label:hover,
-.rating > input:not(:checked) ~ label:hover ~ label {
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23d8b11e' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
-}
+  .rating > input:not(:checked) ~ label:hover,
+  .rating > input:not(:checked) ~ label:hover ~ label {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23d8b11e' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+  }
 
-.emoji-wrapper {
-  width: 100%;
-  text-align: center;
-  height: 100px;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+  .emoji-wrapper {
+    width: 100%;
+    text-align: center;
+    height: 100px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 
-.emoji-wrapper:before,
-.emoji-wrapper:after{
-  content: "";
-  height: 15px;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  z-index: 1;
-}
+  .emoji-wrapper:before,
+  .emoji-wrapper:after{
+    content: "";
+    height: 15px;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    z-index: 1;
+  }
 
-.emoji-wrapper:before {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 35%,rgba(255,255,255,0) 100%);
-}
+  .emoji-wrapper:before {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 35%,rgba(255,255,255,0) 100%);
+  }
 
-.emoji-wrapper:after{
-  bottom: 0;
-  background: linear-gradient(to top, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 35%,rgba(255,255,255,0) 100%);
-}
+  .emoji-wrapper:after{
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 35%,rgba(255,255,255,0) 100%);
+  }
 
-.emoji {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: .3s;
-}
+  .emoji {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: .3s;
+  }
 
-.emoji > svg {
-  margin: 15px 0; 
-  width: 70px;
-  height: 70px;
-  flex-shrink: 0;
-}
+  .emoji > svg {
+    margin: 15px 0; 
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+  }
 
-#rating-1:checked ~ .emoji-wrapper > .emoji { transform: translateY(-100px); }
-#rating-2:checked ~ .emoji-wrapper > .emoji { transform: translateY(-200px); }
-#rating-3:checked ~ .emoji-wrapper > .emoji { transform: translateY(-300px); }
-#rating-4:checked ~ .emoji-wrapper > .emoji { transform: translateY(-400px); }
-#rating-5:checked ~ .emoji-wrapper > .emoji { transform: translateY(-500px); }
+  #rating-1:checked ~ .emoji-wrapper > .emoji { transform: translateY(-100px); }
+  #rating-2:checked ~ .emoji-wrapper > .emoji { transform: translateY(-200px); }
+  #rating-3:checked ~ .emoji-wrapper > .emoji { transform: translateY(-300px); }
+  #rating-4:checked ~ .emoji-wrapper > .emoji { transform: translateY(-400px); }
+  #rating-5:checked ~ .emoji-wrapper > .emoji { transform: translateY(-500px); }
 
-.feedback {
-  max-width: 360px;
-  background-color: #fff;
-  width: 100%;
-  padding: 30px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items: center;
-  box-shadow: 0 4px 30px rgba(0,0,0,.05);
-}
+  .feedback {
+    max-width: 360px;
+    background-color: #fff;
+    width: 100%;
+    padding: 30px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 4px 30px rgba(0,0,0,.05);
+  }
 
-.heart {
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 170px;
-  height: 30px;
-  padding: 5px 10px;
-  margin: auto;
-  border-radius: 30px;
-  background: #FFF;
-  display: block;
-  overflow: hidden;
-  
-  box-shadow: 0 1px #CCC,
-              0 5px #DDD,
-              0 9px 6px -3px #999;
-  
-  unicode-bidi: bidi-override;
-  direction: rtl;
-}
-.heart:not(:checked) > input {
-  display: none;
-}
-#like {
-}
-#like:not(:checked) > label {
-  cursor:pointer;
-  float: right;
-  width: 30px;
-  height: 30px;
-  display: block;
-  
-  color: rgba(233, 54, 40, .4);
-  line-height: 33px;
-  text-align: center;
-}
-#like:not(:checked) > label:hover,
-#like:not(:checked) > label:hover ~ label {
-  color: rgba(233, 54, 40, .6);
-}
-#like > input:checked + label:hover,
-#like > input:checked + label:hover ~ label,
-#like > input:checked ~ label:hover,
-#like > input:checked ~ label:hover ~ label,
-#like > label:hover ~ input:checked ~ label {
-  color: rgba(233, 54, 40, .8);
-}
-#like > input:checked ~ label {
-  color: rgb(233, 54, 40);
-}
+  .heart {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 170px;
+    height: 30px;
+    padding: 5px 10px;
+    margin: auto;
+    border-radius: 30px;
+    background: #FFF;
+    display: block;
+    overflow: hidden;
+    
+    box-shadow: 0 1px #CCC,
+                0 5px #DDD,
+                0 9px 6px -3px #999;
+    
+    unicode-bidi: bidi-override;
+    direction: rtl;
+  }
+  .heart:not(:checked) > input {
+    display: none;
+  }
+  #like {
+  }
+  #like:not(:checked) > label {
+    cursor:pointer;
+    float: right;
+    width: 30px;
+    height: 30px;
+    display: block;
+    
+    color: rgba(233, 54, 40, .4);
+    line-height: 33px;
+    text-align: center;
+  }
+  #like:not(:checked) > label:hover,
+  #like:not(:checked) > label:hover ~ label {
+    color: rgba(233, 54, 40, .6);
+  }
+  #like > input:checked + label:hover,
+  #like > input:checked + label:hover ~ label,
+  #like > input:checked ~ label:hover,
+  #like > input:checked ~ label:hover ~ label,
+  #like > label:hover ~ input:checked ~ label {
+    color: rgba(233, 54, 40, .8);
+  }
+  #like > input:checked ~ label {
+    color: rgb(233, 54, 40);
+  }
 </style>

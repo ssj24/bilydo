@@ -234,6 +234,7 @@
 										id: res.data.id,
 										email: res.data.email,
 										name: res.data.name,
+										password: res.data.password,
 										phone: res.data.phone,
 										location: res.data.location
 									}

@@ -17,6 +17,7 @@ function cookieName() {
   const val = value ? value[2] : null;
   return val;
 }
+
 function cookieLocation() {
   const value = document.cookie.match("(^|;) ?" + "user_location" + "=([^;]*)(;|$)");
   const val = value ? value[2] : null;
