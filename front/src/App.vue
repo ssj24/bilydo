@@ -16,15 +16,19 @@
         <v-spacer></v-spacer>
         
         <v-btn icon 
-          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;"
+          title="둘러보기"
           @click="listOff"
         >
-          🔎
+          <router-link to="/">
+            🔎
+          </router-link>
         </v-btn>
         <span v-if="isLogin">
 
           <v-btn icon 
-            style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+            style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;"
+            title="새 글 쓰기"
           >
             <router-link to="/article">
               ➕
@@ -32,29 +36,35 @@
           </v-btn>
           <v-btn icon 
             @click="logout"
-            style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+            style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;"
+            title="로그아웃"
           >
-            🔓
+            <router-link to="/">
+              🔓
+            </router-link>
           </v-btn>
-          <v-btn icon style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;">
-            <v-badge
-              :content="$store.state.messages"
-              :value="$store.state.messages"
-              color="#FFEC81"
-              bordered
-              offset-x="8"
-              offset-y="15"
-            >
-              <router-link to="/account">
-                {{name}}
-              </router-link>
-            </v-badge>
+          <v-btn icon 
+            title="계정"
+            style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;">
+            <router-link to="/account" class="toMypage">
+              <v-badge
+                :content="$store.state.messages"
+                :value="$store.state.messages"
+                color="#FFEC81"
+                bordered
+                offset-x="8"
+                offset-y="8"
+              >
+                  {{name}}
+              </v-badge>
+            </router-link>
           </v-btn>
           
         </span>
         <v-btn icon 
           v-else
-          style="color: black; font-size: 1em; font-weight: 600; margin-right: 10px;"
+          style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;"
+          title="로그인"
         >
           <router-link to="/auth">
             🔐
@@ -105,10 +115,14 @@ export default class App extends Vue{
     padding: 0;
     span.v-btn__content {
       height: 48px;
-      a {
+          a {
         line-height: 48px;
         width: 48px;
         height:48px;
+      }
+      span.v-badge {
+        width: 48px;
+        height: 48px;
       }
     }
   }
