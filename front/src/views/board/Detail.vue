@@ -143,32 +143,85 @@
           </button>
           <v-dialog
             v-model="dialog"
-            max-width="290"
-          >
-            <v-card>
-              <v-card-title class="headline">Use Google's location service?</v-card-title>
-
-              <v-card-text>
-                Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
+            width="60%"
+            max-width="80%"
+            >
+            <v-card class="contModal">
+              <v-card-title class="modalTitle">
+                ✍️(제공자)님께 대여를 요청합니다
+              </v-card-title>
+              <v-card-text style="color: black; font-size: 1rem;">
+                <div>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        ref="startMenu"
+                        v-model="startMenu"
+                        :close-on-content-click="false"
+                        :return-value.sync="startDate"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="startDate"
+                            label="대여 시작일"
+                            readonly
+                            v-on="on"
+                            color="#f92"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="startDate" no-title scrollable color="#f45e61">
+                          <v-spacer></v-spacer>
+                          <v-btn text color="#f45e61" @click="$refs.startMenu.save(startDate)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-spacer></v-spacer>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        ref="endMenu"
+                        v-model="endMenu"
+                        :close-on-content-click="false"
+                        :return-value.sync="endDate"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="endDate"
+                            label="대여 종료일"
+                            readonly
+                            v-on="on"
+                            color="#f92"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="endDate" no-title scrollable color="#f45e61">
+                          <v-spacer></v-spacer>
+                          <v-btn text color="#f45e61" @click="$refs.endMenu.save(endDate)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                  </v-row>
+                  <p>
+                    예상가격: {{price}}
+                  </p>
+                  <p>
+                    제공자(path), 평점
+                  </p>
+                </div>
+                <hr>
               </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-
+              <v-card-actions class="d-flex justify-center">
                 <v-btn
-                  color="green darken-1"
-                  text
-                  @click="dialog = false"
+                  color="#000"
+                  style="font-size: 1.05em; margin-bottom: 20px;"
+                  outlined
+                  @click="dialogPro = false"
                 >
-                  Disagree
-                </v-btn>
-
-                <v-btn
-                  color="green darken-1"
-                  text
-                  @click="dialog = false"
-                >
-                  Agree
+                  대여 요청
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -181,7 +234,7 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator'
+  import { Component, Vue, Watch } from 'vue-property-decorator'
 
   @Component
   export default class Article extends Vue{
@@ -199,6 +252,7 @@
     private description = '진짜 좋아요 진짜 좋은데 설명할 방법이 없네';
     private images: File[] = [];
     private dialog = false;
+    private price = 0;
     
     public previewImg(): void {
       for (let i = 0; i < this.images.length; i++) {
@@ -216,6 +270,73 @@
         }
         reader.readAsDataURL(this.images[i]);
       }
+    }
+    @Watch('startDate', {
+      immediate: true
+    })
+    startDateChanged() {
+      const dateStart = new Date(Date.parse(this.startDate));
+      const dateEnd = new Date(Date.parse(this.endDate));
+      const diffDate = dateEnd.getDate() - dateStart.getDate();
+      const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
+      const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
+      if (this.radios == 'checkboxDay') {
+        if (diffMonth || diffYear) {
+          this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
+        } else {
+          this.price = this.priceDay * diffDate
+        }
+      } else if (this.radios == 'checkboxMonth') {
+        if (diffDate || diffYear) {
+          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
+        } else {
+          this.price = this.priceMonth * diffMonth
+        }
+      } else {
+        if (diffMonth || diffYear) {
+          this.price = (this.priceYear / 365) * diffDate + (this.priceYear / 12) * diffMonth + (this.priceYear * this.priceYear)
+        } else {
+          this.price = this.priceYear * diffYear
+        }
+      }
+    }
+    @Watch('endDate', {
+      immediate: true
+    })
+    endDateChanged() {
+      const dateStart = new Date(Date.parse(this.startDate));
+      const dateEnd = new Date(Date.parse(this.endDate));
+      const diffDate = dateEnd.getDate() - dateStart.getDate();
+      const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
+      const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
+      if (this.radios == 'checkboxDay') {
+        if (diffMonth || diffYear) {
+          this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
+        } else {
+          this.price = this.priceDay * diffDate
+        }
+      } else if (this.radios == 'checkboxMonth') {
+        if (diffDate || diffYear) {
+          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
+        } else {
+          this.price = this.priceMonth * diffMonth
+        }
+      } else {
+        if (diffDate || diffMonth) {
+          this.price = (this.priceYear / 365) * diffDate + (this.priceYear / 12) * diffMonth + (this.priceYear * diffYear)
+          console.log(typeof diffDate)
+        } else {
+          this.price = this.priceYear * diffYear
+        }
+      }
+    }
+    @Watch('dialog', {
+      immediate: true
+    })
+    dialogClosed() {
+      this.startDate = new Date().toISOString().substr(0, 10);
+      this.endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
+      this.price = 0;
     }
   }
 </script>

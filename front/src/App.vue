@@ -46,7 +46,7 @@
           <v-btn icon 
             title="계정"
             style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;">
-            <router-link to="/account" class="toMypage">
+            <router-link :to="{name:'Account', params:{userId:userId}}" class="toMypage">
               <v-badge
                 :content="$store.state.messages"
                 :value="$store.state.messages"
@@ -85,7 +85,8 @@ import cookie from "@/cookie"
 
 @Component
 export default class App extends Vue{
-  private name = cookie.cookieName();
+  private name = 'my';
+  private userId = '';
   public listOn(): void {
     this.$store.commit('listOn');
   }
@@ -104,6 +105,10 @@ export default class App extends Vue{
   }
   get isLogin() {
     return this.$store.state.isLoggedIn;
+  }
+  created() {
+    this.name = cookie.cookieName() as string;
+    this.userId = cookie.cookieId() as string;
   }
 }
 </script>
@@ -128,11 +133,11 @@ export default class App extends Vue{
   }
 }
 a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navTitle {
-  font-family: 'ON-IGothic'; 
-  color: #3d3d3d !important;
+  font-family: 'SangSangAnt'; 
+  color: #2f023d !important;
   // text-shadow: 1px 1px 1px #8c28b4;
-  font-size: 2em; 
-  font-weight: bolder;
+  font-size: 3em; 
+  // font-weight: bolder;
 }
 .v-badge__badge {
   color: #000 !important;

@@ -6,7 +6,7 @@
         sm="6"
         style="position: relative;"
       >
-        <span class="ribbon2"><span>대전시 유성구</span></span>
+        <span class="ribbon2"><span>{{userAddress}}</span></span>
         <!-- <p class="ribbon">
           <span class="text"><strong class="bold">지역별 현황</strong></span>
         </p> -->
@@ -20,13 +20,15 @@
                   <td width="20%" class="forTd">
                     {{'0'+(i+1)}}
                   </td>
-                  <a :href="region.pic">
+                  <router-link 
+                    :to="{name:'Detail', params:{boardId:i}}"
+                    >
                     <td width="80%" class="forTd2">
                       <section class="mb-4">{{region.product}}</section>
                       <p>{{region.category}}</p>
                       <p>{{region.price}}/{{region.duration}}</p>
                     </td>
-                  </a>
+                  </router-link>
               </tr>
             </tbody>
           </template>
@@ -54,9 +56,10 @@
               :key="recent+i"
             >
               <v-sheet
+              v-if="recent.imagesPath"
                 height="300"
                 tile
-                :style="{'background-image': 'url('+recent.pic+')'}"
+                :style="{'background-image': 'url('+recent.imagesPath[0]+')'}"
               >
                 <v-row
                   class="fill-height"
@@ -68,11 +71,25 @@
                    >{{ recent.product }}</div> -->
                 </v-row>
               </v-sheet>
-              <div class="carouselBottom pa-3">
-                <div class="overline mb-1">{{ recent.category }}</div>
-                <v-list-item-title class="mb-1 productName">{{ recent.product }}</v-list-item-title>
-                <v-list-item-subtitle>{{ recent.price }}/{{ recent.duration }}</v-list-item-subtitle>
-              </div>
+              <router-link 
+                :to="{name:'Detail', params:{boardId:recent.id}}"
+                >
+                <div class="carouselBottom pa-3">
+                  <div class="overline mb-1">{{ recent.category }}</div>
+                  <v-list-item-title class="mb-1 productName">{{ recent.productName }}</v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span v-if="recent.priceDay">
+                      {{ recent.priceDay }}/일
+                    </span>
+                    <span v-else-if="recent.priceWeek">
+                      {{ recent.priceWeek }}/주
+                    </span>
+                    <span v-else-if="recent.priceMonth">
+                      {{ recent.priceMonth }}/월
+                    </span>
+                  </v-list-item-subtitle>
+                </div>
+              </router-link>
             </v-carousel-item>
           </v-carousel>
           
@@ -91,11 +108,20 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator'
-  
+  import cookie from '@/cookie'
+
   @Component
   export default class MainList extends Vue{
     @Prop() regionBoards!: object[]
     @Prop() recentBoards!: object[]
+    private userAddress = '';
+    created() {
+      const Location = cookie.cookieLocation()
+        if (Location) {
+          const locations = Location.split(" ");
+          this.userAddress = locations.slice(0, 2).join('\n');
+        }
+    }
   }
 </script>
 

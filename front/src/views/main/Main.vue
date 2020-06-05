@@ -151,9 +151,10 @@
         for (let i = 0; i < response.data.length; i++) {
           this.listSize += response.data[i].cnt;          
         }
-        console.log("listSize1 : ",this.listSize);
         this.$store.commit('listOff');
         });
+      } else {
+        this.$store.commit('listOff');
       }
     }
     public selectProduct(productName: string, cnt: number): void{
@@ -161,7 +162,6 @@
       this.searchedName = productName;
       this.hasSearchValue = false;
       this.listSize = cnt;
-      console.log("selectProduct : ", productName);
     }
 
     public async getBoardInfo() {
@@ -178,8 +178,13 @@
         }
       }).then((response) => {
         this.searchCdds = response.data;
-        console.log("searchCdds : ", this.searchCdds);
       });
+    }
+    created() {
+      baseURL('/boards?page=0&size=10')
+        .then(res => {
+          this.recentBoards = res.data.content;
+        })
     }
 
   }
