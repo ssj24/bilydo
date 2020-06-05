@@ -9,14 +9,14 @@
             </p>
           </v-col>
           <v-col cols="12" sm="9" class="articleContent">
-            <v-row>
+            <v-row style="padding: 10px;">
               <v-col cols="3">
                 <v-select label="카테고리" color="#f66" v-model="category" :items="categories">
                 </v-select>
               </v-col>
               <v-col cols="1">
               </v-col>
-              <v-col cols="7" class="productName">
+              <v-col cols="8" class="productName">
                 <v-text-field label="제품명" color="#f66" v-model="product" v-on:input="getBoardInfo($event)">
                 </v-text-field>
                 <ul class="hide" v-bind:class="{ show: hasSearchValue}">
@@ -50,15 +50,15 @@
           <v-col cols="12" sm="9" class="articleContent">
             <v-row>
               <v-col cols="6" sm="4">
-                <v-text-field label="00시" color="#fc2" v-model="addressCity" class="addressInput">
+                <v-text-field label="시/도" color="#fc2" v-model="addressCity" class="addressInput">
                 </v-text-field>
               </v-col>
               <v-col cols="6" sm="4">
-                <v-text-field label="00구" color="#fc2" v-model="addressGu" class="addressInput">
+                <v-text-field label="군/구" color="#fc2" v-model="addressGu" class="addressInput">
                 </v-text-field>
               </v-col>
               <v-col cols="6" sm="4">
-                <v-text-field label="00동" color="#fc2" v-model="addressDong" class="addressInput">
+                <v-text-field label="동" color="#fc2" v-model="addressDong" class="addressInput">
                 </v-text-field>
               </v-col>
             </v-row>
@@ -212,7 +212,7 @@
           </v-col>
         </v-row>
         <v-row justify="center" class="buttons">
-          <button class="articleSubmit draw meet">
+          <button class="articleSubmit draw meet" @click="submitArticle">
             작성
           </button>
         </v-row>
@@ -224,6 +224,7 @@
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
   import baseURL from "@/base-url"
+  import cookie from "@/cookie"
 
   @Component
   export default class Article extends Vue{
@@ -266,6 +267,7 @@
       "헬스/건강식품",
       "기타"
     ];
+    // private userId: cookie.cookieId();
 
     public previewImg(): void {
       for (let i = 0; i < this.images.length; i++) {
@@ -319,6 +321,31 @@
       }).then((response) => {
         this.searchCdds = response.data;
       });
+    }
+    public submitArticle(): void {
+      const formData = new FormData();
+      for (let i = 0; i < this.images.length; i++) {
+        formData.append("files", this.images[i])
+      }
+      // const data = `{
+      //   productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}", borrowableSrt: "${this.startDate}", borrowableEnd: "${this.endDate}", subscript: "${this.description}", priceDay: "${this.priceDay}", priceWeek: "${this.priceMonth}", priceMonth: "${this.priceYear}"
+      // }`
+      const data = `{
+        productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}"
+      }`
+      console.log(data)
+      console.log(formData)
+      formData.append("boardString", data)
+      
+      baseURL.post('/boards/board', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      }).then(res => {
+        console.log(res)
+      }).catch((err)=>{
+        alert(err)
+      })
     }
 
   }

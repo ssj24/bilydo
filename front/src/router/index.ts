@@ -21,19 +21,27 @@ const routes: Array<RouteConfig> = [
     component: Signup
   },
   {
-    path: "/account",
+    path: "/account/:userId",
     name: "Account",
-    component: Account
+    component: Account,
+    meta: { loginRequire: true },
   },
   {
     path: "/article",
     name: "Article",
-    component: Article
+    component: Article,
+    meta: { loginRequire: true },
   },
   {
-    path: "/detail",
+    path: "/detail/:boardId",
     name: "Detail",
-    component: Detail
+    component: Detail,
+    meta: { loginRequire: true },
+  },
+  {
+    path: "/*",
+    name: "404Error",
+    redirect: { name: "Main" },
   },
 ];
 
@@ -46,7 +54,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (cookie.getCookie()) {
+  if (cookie.token()) {
     if (to.meta.loginRequire === false) {
       if (from.name === null) {
         return next("Main");

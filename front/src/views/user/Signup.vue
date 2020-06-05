@@ -52,7 +52,7 @@
 									type="text" 
 									class="input" 
 									color="black"
-									label="00시" 
+									label="시/도" 
 									v-model="addressCity"
 									:rules="addressRules"
 									required
@@ -64,7 +64,7 @@
 									type="text" 
 									class="input" 
 									color="black"
-									label="00구" 
+									label="군/구" 
 									v-model="addressGu"
 									:rules="addressRules"
 									required

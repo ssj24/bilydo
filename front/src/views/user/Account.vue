@@ -86,6 +86,7 @@
             <span v-for="i in averagePoint" :key="i">
               💖
             </span>
+            {{averagePoint}}/5
           </v-col>
         </v-row>
         <v-row align="center">
@@ -326,7 +327,7 @@
     <v-dialog
       v-model="dialogReview"
       max-width="80%"
-    >
+      >
       <v-card class="reviewModal">
         <v-card-title class="modalTitle" 
           v-if="data.role == '제공자'" >
@@ -451,11 +452,10 @@
             </div>
           </div>
         </div>
-        <v-card-text>
+        <v-card-text style="padding-bottom: 0px;">
           <v-textarea v-model="review.review" color="#8c28b4" placeholder="간단한 후기를 작성해주세요.">
           </v-textarea>
         </v-card-text>
-        <input type="text">
         <v-card-actions>
           <v-spacer></v-spacer>
 
@@ -476,7 +476,7 @@
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
   import cookie from "@/cookie" 
-  import baseUrl from '../../base-url';
+  import baseURL from '../../base-url';
 
   @Component
   export default class Account extends Vue {
@@ -610,7 +610,7 @@
         password: this.newPassword,
         phone: this.userContact
       }
-      baseUrl.put('/users', data)
+      baseURL.put('/users', data)
         .then(() => {
           alert("정보 수정이 완료되었습니다.")
         })
@@ -619,13 +619,18 @@
         })
     }
     created() {
-      baseUrl('/users/user')
+      baseURL('/users/user')
       .then(res => {
         this.userName = res.data.name;
         this.newPassword = res.data.password;
         this.userContact = res.data.phone;
         this.userAddress = res.data.location;
       })
+      // baseURL('/users/user/boards?page=0&size=10')
+      //   .then(res=> {
+      //     // content의 board state를 보고 진행 중 거래와 진행 완료 거래로 나누기
+      //     this.contractProgress = res.data.content;
+      //   })
     }
   }
 </script>
@@ -876,7 +881,7 @@ $line-size: 7;
   
   // cyan theme
   &.cyann {
-    $theme-color: rgb(63, 9, 58);
+    $theme-color: rgb(139, 49, 130);
     span { color: $theme-color; }
     .corners {
       &:after,
