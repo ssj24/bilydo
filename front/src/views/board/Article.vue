@@ -9,9 +9,24 @@
             </p>
           </v-col>
           <v-col cols="12" sm="9" class="articleContent">
-            <v-select color="#8c28b4" v-model="product">
+            <v-row>
+              <v-col cols="3">
+                <v-select label="카테고리" color="#f66" v-model="category" :items="categories">
+                </v-select>
+              </v-col>
+              <v-col cols="1">
+              </v-col>
+              <v-col cols="7" class="productName">
+                <v-text-field label="제품명" color="#f66" v-model="product" v-on:input="getBoardInfo($event)">
+                </v-text-field>
+                <ul class="hide" v-bind:class="{ show: hasSearchValue}">
+                  <li v-for="searchCdd in searchCdds" v-bind:key = "searchCdd.productName" v-on:click="selectProduct(searchCdd.productName)">
+                    <span>{{ searchCdd.productName }}({{searchCdd.cnt}})</span>
+                  </li>
+                </ul>
+              </v-col> 
+            </v-row>
 
-            </v-select>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -35,15 +50,15 @@
           <v-col cols="12" sm="9" class="articleContent">
             <v-row>
               <v-col cols="6" sm="4">
-                <v-text-field label="00시" color="#fc2" v-model="addressCity" id="addressInput">
+                <v-text-field label="00시" color="#fc2" v-model="addressCity" class="addressInput">
                 </v-text-field>
               </v-col>
               <v-col cols="6" sm="4">
-                <v-text-field label="00구" color="#fc2" v-model="addressGu" id="addressInput">
+                <v-text-field label="00구" color="#fc2" v-model="addressGu" class="addressInput">
                 </v-text-field>
               </v-col>
               <v-col cols="6" sm="4">
-                <v-text-field label="00동" color="#fc2" v-model="addressDong" id="addressInput">
+                <v-text-field label="00동" color="#fc2" v-model="addressDong" class="addressInput">
                 </v-text-field>
               </v-col>
             </v-row>
@@ -208,10 +223,12 @@
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
+  import baseURL from "@/base-url"
 
   @Component
   export default class Article extends Vue{
     private product = '';
+    private category = '';
     private used = '';
     private addressCity = '';
     private addressGu = '';
@@ -228,7 +245,28 @@
     private priceYear = 0;
     private description = '';
     private images: File[] = [];
-    
+    private hasSearchValue = false;
+    private searchCdds: object[] = [];
+    private categories: string[] = [
+      "전체",
+      "패션의류/잡화",
+      "뷰티",
+      "출산/유아동",
+      "식품",
+      "주방용품",
+      "생활용품",
+      "홈인테리어",
+      "가전디지털",
+      "스포츠/레저",
+      "자동차용품",
+      "도서/음반/DVD",
+      "완구/취미",
+      "문구/오피스",
+      "반려동물용품",
+      "헬스/건강식품",
+      "기타"
+    ];
+
     public previewImg(): void {
       for (let i = 0; i < this.images.length; i++) {
         const reader = new FileReader();
@@ -260,6 +298,29 @@
       this.images.splice(key, 1);
       this.previewImg()
     }
+    public selectProduct(productName: string): void{
+      // vuex에 productName입력
+      this.product = productName;
+      this.hasSearchValue = false;
+    }
+
+    public async getBoardInfo() {
+      if(this.product == ''){
+        this.hasSearchValue = false;
+        return;
+      }
+
+      this.hasSearchValue = true;
+      
+      baseURL.get('/boards/name', {
+        params: {
+          productName: this.product
+        }
+      }).then((response) => {
+        this.searchCdds = response.data;
+      });
+    }
+
   }
 </script>
 
@@ -574,5 +635,41 @@ $orange: #ff8a30;
     border-right-width: 1.5em;
   }
 }
+.articleContent {
+  .hide {
+    display: none;
+  }
+  .productName {
+    position: relative;
+  }
+  ul{
+    padding-left: 0px !important;
+  }
 
+  .show{
+    display: inherit;
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    height: 156px;
+    overflow-y: auto;
+    z-index: 1;
+      li {
+      margin-top: -1px;
+      // padding: 0 20px;
+      width: 100%;
+      height: 40px;
+      background-color: #fff;
+      box-sizing: border-box;
+      border: 1px solid #888;
+      outline: none;
+      font-size: 16px;
+      line-height: 40px;
+      cursor: pointer;
+      &:hover, &.sel {
+        background-color: darken(#fff, 5%);
+      }
+    }
+  }
+}
 </style>

@@ -51,6 +51,13 @@
   })
   export default class Result extends Vue{
     @Prop() regionBoards!: object[]
+    @Prop() category!: string
+    @Prop() listSize!: number
+    @Prop() productName!: string
+    
+    private pageSize = 5;
+    private currentPage = 0;
+
     private btn1 = true;
     private btn2 = false;
     private btn3 = false;
@@ -69,6 +76,15 @@
       this.btn2 = false;
       this.btn3 = true;
     }
+    created() {
+      this.currentPage = 0;
+      console.log("category : ",this.$props.category);
+      console.log("listSize : ",this.$props.listSize);
+      console.log("productName : ",this.$props.productName);
+
+      //api/boards 에 요청~
+    }
+
   }
 </script>
 

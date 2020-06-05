@@ -6,18 +6,27 @@
           :items="categories"
           label="카테고리"
           color="#8c28b4"
+          v-model="selectCate"
         ></v-select>
-        <input type="text" class="searchInput">
-        <button @click="search">
-          <v-icon class="ma-2 magnifyIcon">mdi-magnify</v-icon>
-        </button>
+        <span class="productField">
+          <input type="text" class="searchInput" v-model="searchedName" v-on:input="getBoardInfo($event)">
+          <button @click="search">
+            <v-icon class="ma-2 magnifyIcon">mdi-magnify</v-icon>
+          </button>
+          <ul class="hide" v-bind:class="{ show: hasSearchValue}">
+            <li v-for="searchCdd in searchCdds" v-bind:key = "searchCdd.productName" v-on:click="selectProduct(searchCdd.productName, searchCdd.cnt)">
+              <span>{{ searchCdd.productName }}({{searchCdd.cnt}})</span>
+            </li>
+          </ul>
+        </span>
+
       </v-col>
     </v-row>
     <span v-if="$store.state.mainList">
       <MainList :regionBoards="regionBoards" :recentBoards="recentBoards"></MainList>
     </span>
     <span v-else>
-      <Result :regionBoards="regionBoards"></Result>
+      <Result :category="selectCate" :listSize="listSize" :productName="searchedName" :regionBoards="regionBoards"></Result>
     </span>
   </v-container>
 </template>
@@ -27,6 +36,7 @@
   import "@/assets/css/basic.css"
   import MainList from "@/views/main/MainList.vue"
   import Result from "@/views/board/Result.vue"
+  import baseURL from "@/base-url"
 
   @Component({
     components: {
@@ -35,11 +45,32 @@
     }
   })
   export default class Main extends Vue {
+    private searchedName = "";
+    private hasSearchValue = false;
+    private searchCdds: object[] = [];
+    private selectCate = "";
+    private listSize = 0;
+
     private categories: string[] = [
-      "전자기기",
-      "화장품",
-      "책"
+      "전체",
+      "패션의류/잡화",
+      "뷰티",
+      "출산/유아동",
+      "식품",
+      "주방용품",
+      "생활용품",
+      "홈인테리어",
+      "가전디지털",
+      "스포츠/레저",
+      "자동차용품",
+      "도서/음반/DVD",
+      "완구/취미",
+      "문구/오피스",
+      "반려동물용품",
+      "헬스/건강식품",
+      "기타"
     ];
+
     private regionBoards: object[] = [
       {
         product: "노트북거치대",
@@ -108,12 +139,54 @@
       },
     ];
     public search(): void {
-      this.$store.commit('listOff');
+      // 1. 백엔드에 (카테고리, 검색이름) 보내서 결과값을 boardList에 저장
+      // 2. boardList을 25번줄 regionBoard에 넣어줌
+      if(this.searchedName == ''){
+        this.listSize = 0;
+        baseURL.get('/boards/name', {
+        params: {
+          productName:' '
+        }
+      }).then((response) => {
+        for (let i = 0; i < response.data.length; i++) {
+          this.listSize += response.data[i].cnt;          
+        }
+        console.log("listSize1 : ",this.listSize);
+        this.$store.commit('listOff');
+        });
+      }
     }
+    public selectProduct(productName: string, cnt: number): void{
+      // vuex에 productName입력
+      this.searchedName = productName;
+      this.hasSearchValue = false;
+      this.listSize = cnt;
+      console.log("selectProduct : ", productName);
+    }
+
+    public async getBoardInfo() {
+      if(this.searchedName == ''){
+        this.hasSearchValue = false;
+        return;
+      }
+
+      this.hasSearchValue = true;
+      
+      baseURL.get('/boards/name', {
+        params: {
+          productName: this.searchedName
+        }
+      }).then((response) => {
+        this.searchCdds = response.data;
+        console.log("searchCdds : ", this.searchCdds);
+      });
+    }
+
   }
 </script>
 
 <style lang="scss">
+
 .searchBar .v-select {
   display: inline-block;
   width: 150px;
@@ -132,6 +205,42 @@
 }
 .searchSection {
   margin: 2rem 0;
+}
+.productField {
+  position: relative;
+  ul {
+    padding: 0px !important;
+  }
+}
+.hide {
+  display: none;
+}
+
+.show{
+  display: inherit;
+  position: absolute;
+  top: 30px;
+  left: 0px;
+  width: 90%;
+  height: 156px;
+  overflow-y: auto;
+  z-index: 10;
+    li {
+    margin-top: -1px;
+    padding: 0 20px;
+    width: 100%;
+    height: 40px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #888;
+    outline: none;
+    font-size: 16px;
+    line-height: 40px;
+    cursor: pointer;
+    &:hover, &.sel {
+      background-color: darken(#fff, 5%);
+    }
+  }
 }
 
 </style>
