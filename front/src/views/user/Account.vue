@@ -801,7 +801,7 @@ $line-size: 7;
   }
 }
 
-@mixin line-corners-hover($line-size: 7, $line-type: out, $line-distance: 6) {
+@mixin line-corners-hover($line-size: 20, $line-type: out, $line-distance: 6) {
   @if $line-type == out {
     &:before { left: 0; }
     &:after { right: 0; }
@@ -821,6 +821,7 @@ $line-size: 7;
 @mixin line-corners-out($line-color: cyan, $line-size: 7) {
   .corners { @include line-corners($line-color, $line-size, out); }
   &:hover {
+    color: #8905e0;
     .corners { @include line-corners-hover($line-size, in); }
   }
 }
@@ -874,18 +875,23 @@ $line-size: 7;
 }
 
 .bttn {
-  //opacity: 0;
+  // opacity: 0;
 
-  //will-change: transform, opacity;
-  //animation: fadeIn 0.6s 0.5s forwards ease-out;
+  // will-change: transform, opacity;
+  // animation: fadeIn 0.6s 0.5s forwards ease-out;
   
   // cyan theme
   &.cyann {
-    $theme-color: rgb(139, 49, 130);
+    $theme-color: #8b3182;
     span { color: $theme-color; }
     .corners {
       &:after,
       &:before { border-color: $theme-color; }
+    }
+    &:hover {
+      span {
+        color: #52196d;
+      }
     }
   }
 }

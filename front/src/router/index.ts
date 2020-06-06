@@ -54,7 +54,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (cookie.token()) {
+  if (cookie.getCookie()) {
     if (to.meta.loginRequire === false) {
       if (from.name === null) {
         return next("Main");
