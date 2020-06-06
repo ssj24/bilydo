@@ -85,6 +85,17 @@
               </v-row>
               <v-row style="padding-left: 20px;">
                 <p>
+                  {{priceWeek}}
+                </p>
+                <v-col>
+                  <span style="margin: 0 10px;">
+                    / 주
+                  </span>
+                  <v-radio color="#f45e61" value="checkboxWeek" style="display: inline-block; margin-top: 10px;"></v-radio>
+                </v-col>
+              </v-row>
+              <v-row style="padding-left: 20px;">
+                <p>
                   {{priceMonth}}
                 </p>
                 <v-col>
@@ -92,17 +103,6 @@
                     / 월
                   </span>
                   <v-radio color="#f45e61" value="checkboxMonth" style="display: inline-block; margin-top: 10px;"></v-radio>
-                </v-col>
-              </v-row>
-              <v-row style="padding-left: 20px;">
-                <p>
-                  {{priceYear}}
-                </p>
-                <v-col>
-                  <span style="margin: 0 10px;">
-                    / 년
-                  </span>
-                  <v-radio color="#f45e61" value="checkboxYear" style="display: inline-block; margin-top: 10px;"></v-radio>
                 </v-col>
               </v-row>
             </v-radio-group>
@@ -238,6 +238,7 @@
 
   @Component
   export default class Article extends Vue{
+    private boardId = 0;
     private product = '갤럭시 노트10';
     private used = '개봉만 함';
     private address = '대전시 유성구 도룡동';
@@ -247,8 +248,8 @@
     private endMenu = false;
     private radios = 'checkboxDay';
     private priceDay = 1000;
+    private priceWeek = 100000;
     private priceMonth = 10000;
-    private priceYear = 100000;
     private description = '진짜 좋아요 진짜 좋은데 설명할 방법이 없네';
     private images: File[] = [];
     private dialog = false;
@@ -281,24 +282,17 @@
       const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
       const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
       if (this.radios == 'checkboxDay') {
-        if (diffMonth || diffYear) {
           this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
-        } else {
-          this.price = this.priceDay * diffDate
-        }
-      } else if (this.radios == 'checkboxMonth') {
-        if (diffDate || diffYear) {
-          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
-        } else {
-          this.price = this.priceMonth * diffMonth
-        }
+      } else if (this.radios == 'checkboxWeek') {
+          this.price = (this.priceWeek / 7) * diffDate + (this.priceWeek * 4 * diffMonth) + (this.priceWeek * 4 * 12 * diffYear)
       } else {
-        if (diffMonth || diffYear) {
-          this.price = (this.priceYear / 365) * diffDate + (this.priceYear / 12) * diffMonth + (this.priceYear * this.priceYear)
-        } else {
-          this.price = this.priceYear * diffYear
-        }
+          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
       }
+      if (this.price <= 0) {
+        alert("날짜를 다시 설정해주세요")
+        this.startDate = new Date().toISOString().substr(0, 10);
+      }
+
     }
     @Watch('endDate', {
       immediate: true
@@ -310,24 +304,15 @@
       const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
       const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
       if (this.radios == 'checkboxDay') {
-        if (diffMonth || diffYear) {
           this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
-        } else {
-          this.price = this.priceDay * diffDate
-        }
-      } else if (this.radios == 'checkboxMonth') {
-        if (diffDate || diffYear) {
-          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
-        } else {
-          this.price = this.priceMonth * diffMonth
-        }
+      } else if (this.radios == 'checkboxWeek') {
+          this.price = (this.priceWeek / 7) * diffDate + (this.priceWeek * 4 * diffMonth) + (this.priceWeek * 4 * 12 * diffYear)
       } else {
-        if (diffDate || diffMonth) {
-          this.price = (this.priceYear / 365) * diffDate + (this.priceYear / 12) * diffMonth + (this.priceYear * diffYear)
-          console.log(typeof diffDate)
-        } else {
-          this.price = this.priceYear * diffYear
-        }
+          this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
+      }
+      if (this.price <= 0) {
+        alert("날짜를 다시 설정해주세요")
+        this.endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
       }
     }
     @Watch('dialog', {
@@ -337,6 +322,9 @@
       this.startDate = new Date().toISOString().substr(0, 10);
       this.endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
       this.price = 0;
+    }
+    created() {
+      this.boardId = Number(this.$route.params.boardId);
     }
   }
 </script>

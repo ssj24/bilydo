@@ -1,5 +1,5 @@
 <template>
-  <v-row class="mainSection">
+  <v-row class="mainSection" justify="center">
       <v-col
         class="regionTrade"
         cols="12"
@@ -21,12 +21,14 @@
                     {{'0'+(i+1)}}
                   </td>
                   <router-link 
-                    :to="{name:'Detail', params:{boardId:i}}"
+                    :to="{name:'Detail', params:{boardId:region.id}}"
                     >
                     <td width="80%" class="forTd2">
-                      <section class="mb-4">{{region.product}}</section>
+                      <section class="mb-4">{{region.productName}}</section>
                       <p>{{region.category}}</p>
-                      <p>{{region.price}}/{{region.duration}}</p>
+                      <p v-if="region.priceDay">{{region.priceDay}}/일</p>
+                      <p v-else-if="region.priceWeek">{{region.priceWeek}}/주</p>
+                      <p v-else-if="region.priceMonth">{{region.priceMonth}}/월</p>
                     </td>
                   </router-link>
               </tr>
@@ -41,13 +43,13 @@
         sm="6"
       >
         <v-card
-          elevation="24"
           max-width="444"
           class="mx-auto"
         >
           <span class="ribbon3"><span>최근 게시글</span></span>
           <v-system-bar lights-out></v-system-bar>
           <v-carousel
+            cycle
             hide-delimiters
             height="400"
           >
@@ -55,11 +57,13 @@
               v-for="(recent, i) in recentBoards"
               :key="recent+i"
             >
+            
               <v-sheet
-              v-if="recent.imagesPath"
+                v-if="recent.imagesPath"
                 height="300"
                 tile
-                :style="{'background-image': 'url('+recent.imagesPath[0]+')'}"
+                :style="{'background-image': 'url(http://13.125.209.188:8080/'+recent.imagesPath[0]+')'}"
+                style="background-size: cover;"
               >
                 <v-row
                   class="fill-height"
@@ -88,6 +92,9 @@
                       {{ recent.priceMonth }}/월
                     </span>
                   </v-list-item-subtitle>
+                  <div class="cir4">
+                    <div class="cir5"></div>
+                  </div>
                 </div>
               </router-link>
             </v-carousel-item>
@@ -108,48 +115,123 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator'
-  import cookie from '@/cookie'
 
   @Component
   export default class MainList extends Vue{
     @Prop() regionBoards!: object[]
     @Prop() recentBoards!: object[]
-    private userAddress = '';
-    created() {
-      const Location = cookie.cookieLocation()
-        if (Location) {
-          const locations = Location.split(" ");
-          this.userAddress = locations.slice(0, 2).join('\n');
-        }
-    }
+    @Prop() userAddress!: string
   }
+  
 </script>
 
-<style lang="scss" scoped>
-.regionBoard {
-  border-bottom: 1px solid black !important;
+<style lang="scss">
+.theme--light.v-data-table {
+  background-color:rgba(255, 255, 255, 0.822) !important;
+  tr:hover {
+    // background-color: rgb(248, 237, 255) !important;
+    background-image: radial-gradient(closest-side, #fffaba, #fff) !important;
+  }
 }
 .forTd {
   text-align: center;
-  color: #8c28b4;
-  font-size: 2rem !important;
-  text-shadow: 1px 1px 1px rgb(165, 165, 255);
+  color: #560875;
+  font-size: 3rem !important;
+  text-shadow: 1px 1px 1px rgb(255, 249, 214);
+  position: relative;
+  &:after {
+    background: linear-gradient(-45deg, #000000 3px, transparent 0), linear-gradient(45deg, #000 3px, transparent 0);
+    background-position: left-bottom;
+    background-repeat: repeat-x;
+    background-size: 6px 6px;
+    content: " ";
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 5px;
+  }
 }
 .forTd2 {
   display: table;
   line-height: .5em;
   width: 90%;
+  position: relative;
+  font-weight: 900;
+  &:after {
+    background: linear-gradient(-45deg, #000 3px, transparent 0), linear-gradient(45deg, #000 3px, transparent 0);
+    background-position: left-bottom;
+    background-repeat: repeat-x;
+    background-size: 6px 6px;
+    content: " ";
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 5px;
+  }
 }
 .forTd2 > section {
-  font-family: "Cafe24Dangdanghae";
+  font-weight: 800;
   font-size: 1.1rem;
   padding-top: 20px;
+}
+.recentBoards .v-card {
+  border: 1px solid purple;
+  .v-sheet {
+    border-bottom: 1px solid rgb(253, 247, 255);
+  }
+  &:before {
+    content: ' ';
+    position: absolute;
+    right: -90px;
+    bottom: 50px;
+    z-index: -1;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: #560875;
+  }
+  &:hover {
+    &:after {
+      content: '보러가기';
+      font-family: 'SangSangAnt'; 
+      position: absolute;
+      color: #ffbf00;
+      text-shadow: 0px 0px 1px #ffbf00;
+      right: 10px;
+      bottom: 50px;
+      font-size: 3em;
+      // font-weight: 900;
+    }
+    .cir4 {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -50px;
+      bottom: -30px;
+      border: 2px dashed #8c28b4;
+      border-radius: 200px;
+    }
+  }
 }
 .recentBoards .productName {
   font-size: 20px;
   font-weight: 900;
 }
-
+.carouselBottom {
+  display: block !important;
+  width: 100%;
+  border-top: 1px solid #f9eaff;
+  color: black !important;
+  position: relative;
+  
+}
+.v-application .elevation-24 {
+  box-shadow: none !important;
+}
 .ribbon1 {
   z-index: 2;
   position: absolute;
@@ -208,6 +290,7 @@
   border-top-left-radius: 3px;
   background: #fff8cf;
   box-shadow: 1px 1px 1px rgb(235, 235, 235);
+  z-index: 2;
 }
 .ribbon2:before {
   height: 0;
@@ -216,16 +299,19 @@
   top: 0.1px;
   border-bottom: 8px solid #FFEC81;
   border-right: 6px solid transparent;
+  z-index: 2;
 }
 .ribbon2:before, .ribbon2:after {
   content: "";
   position: absolute;
+  z-index: 2;
 }
 .ribbon2:after {
   height: 0;
   width: 0;
   bottom: -29.5px;
   left: 0;
+  z-index: 2;
   border-left: 35px solid #fff8cf;
   border-right: 35px solid #fff8cf;
   border-bottom: 30px solid transparent;
@@ -326,113 +412,25 @@
   border-top: 10px solid #cd8d11;
   border-right: 10px solid transparent;
 }
-.wrap {
-  width: 100%;
-  height: 188px;
-  position: absolute;
-  top: -8px;
-  left: 8px;
-  overflow: hidden;
-}
-.wrap:before, .wrap:after {
-  content: ""; 
-  position: absolute;
-}
-.wrap:before {
-  width: 40px;
-  height: 8px;
-  right: 100px;
-  background: #4D6530;
-  border-radius: 8px 8px 0px 0px;
-}
-.wrap:after {
-  width: 8px;
-  height: 40px;
-  right: 0px;
-  top: 100px;
-  background: #4D6530;
-  border-radius: 0px 8px 8px 0px;
-}
+
 .ribbon6 {
   width: 200px;
-  height: 40px;
+  height: 50px;
   line-height: 40px;
   position: absolute;
-  top: 30px;
-  right: -50px;
+  bottom: 0px;
+  right: -60px;
   z-index: 2;
   overflow: hidden;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-  border: 1px dashed;
-  box-shadow:0 0 0 3px #57DD43,  0px 21px 5px -18px rgba(0,0,0,0.6);
-  background: #57DD43;
+  -webkit-transform: rotate(135deg);
+  transform: rotate(135deg);
+  // border: 1px dashed;
+  // box-shadow:0 0 0 3px #57DD43,  0px 21px 5px -18px rgba(0,0,0,0.6);
+  background: #f9eaff;
   text-align: center;
 }
-@media (min-width: 500px) {
-  .ribbons-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  .ribbon {
-    width: 48%;
-  }
-}
 
-.ribbon{
-  font-size:20px;
-  position:relative;
-  display:inline-block;
-  text-align:center;
-  width: 100%;
-}
-.text{
-  display:inline-block;
-  padding:0.5em 2em;
-  width: 100%;
-  line-height:1.2em;
-  background: #e2f0f9;
-  position:relative;
-}
-.ribbon:before,
-.text:before,.text:after {
-  content:'';
-  position:absolute;
-  border-style:solid;
-}
-.ribbon:before{
-  top:0.3em; left:0.2em;
-  width:100%; height:100%;
-  border:none;
-  background:#e2f0f9;
-  z-index:-2;
-}
-.text:before{
-  bottom:100%; left:0;
-  border-width: .5em .7em 0 0;
-  border-color: transparent #286fb4 transparent transparent;
-}
-.text:after{
-  top:100%; right:0;
-  border-width: .5em 2em 0 0;
-  border-color: #286fb4 transparent transparent transparent;
-}
-// .ribbon:after, .bold:before{
-//   top:0.5em; right: -5em;
-//   border-width: 1.1em 1em 1.1em 3em;
-//   border-color: #ff0000 transparent #e2f0f9 #e2f0f9;
-//   z-index:-1;
-// }
-// .bold:before{
-//   border-color: #e2f0f9 transparent #e2f0f9 #e2f0f9;
-//   top:0.7em;
-//   right:-2.3em;
-// }
-.carouselBottom {
-  display: block !important;
-  background: white;
-  width: 100%;
-  color: black !important;
-}
+
+
+
 </style>

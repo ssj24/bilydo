@@ -1,223 +1,235 @@
 <template>
   <v-container>
-    <v-row justify="center">
-      <v-col cols="11" sm="10" class="articleMain page">
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleSt">
-              제품명
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <v-row style="padding: 10px;">
-              <v-col cols="3">
-                <v-select label="카테고리" color="#f66" v-model="category" :items="categories">
-                </v-select>
-              </v-col>
-              <v-col cols="1">
-              </v-col>
-              <v-col cols="8" class="productName">
-                <v-text-field label="제품명" color="#f66" v-model="product" v-on:input="getBoardInfo($event)">
-                </v-text-field>
-                <ul class="hide" v-bind:class="{ show: hasSearchValue}">
-                  <li v-for="searchCdd in searchCdds" v-bind:key = "searchCdd.productName" v-on:click="selectProduct(searchCdd.productName)">
-                    <span>{{ searchCdd.productName }}({{searchCdd.cnt}})</span>
-                  </li>
-                </ul>
-              </v-col> 
-            </v-row>
+    <div class="particles"></div>
+    <v-form ref="articleForm" v-model="articleValid" lazy-validation @submit.prevent>
+      <v-row justify="center">
+        <v-col cols="11" sm="10" class="articleMain page">
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleSt">
+                제품명
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <v-row style="padding: 10px;">
+                <v-col cols="3">
+                  <v-select label="카테고리" required color="#f66" 
+                    v-model="category" 
+                    :items="categories"
+                    :rules="requiredRules"
+                    >
+                  </v-select>
+                </v-col>
+                <v-col cols="1">
+                </v-col>
+                <v-col cols="8" class="productName">
+                  <v-text-field label="제품명" required color="#f66" v-model="product" v-on:input="getBoardInfo($event)" :rules="requiredRules">
+                  </v-text-field>
+                  <ul class="hide" v-bind:class="{ show: hasSearchValue}">
+                    <li v-for="searchCdd in searchCdds" v-bind:key = "searchCdd.productName" v-on:click="selectProduct(searchCdd.productName)">
+                      <span>{{ searchCdd.productName }}({{searchCdd.cnt}})</span>
+                    </li>
+                  </ul>
+                </v-col> 
+              </v-row>
 
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleNd">
-              사용 기간
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <v-text-field color="#f92" v-model="used">
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleNd">
+                사용 기간
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <v-text-field color="#f92" v-model="used" :rules="requiredRules">
+                
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleRd">
+                주소
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <v-row>
+                <v-col cols="6" sm="4">
+                  <v-text-field required label="시/도" color="#fc2" v-model="addressCity" class="addressInput" :rules="requiredRules">
+                  </v-text-field>
+                </v-col>
+                <v-col cols="6" sm="4">
+                  <v-text-field required label="군/구" color="#fc2" v-model="addressGu" class="addressInput" :rules="requiredRules">
+                  </v-text-field>
+                </v-col>
+                <v-col cols="6" sm="4">
+                  <v-text-field required label="동" color="#fc2" v-model="addressDong" class="addressInput" :rules="requiredRules">
+                  </v-text-field>
+                </v-col>
+              </v-row>
               
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleRd">
-              주소
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <v-row>
-              <v-col cols="6" sm="4">
-                <v-text-field label="시/도" color="#fc2" v-model="addressCity" class="addressInput">
-                </v-text-field>
-              </v-col>
-              <v-col cols="6" sm="4">
-                <v-text-field label="군/구" color="#fc2" v-model="addressGu" class="addressInput">
-                </v-text-field>
-              </v-col>
-              <v-col cols="6" sm="4">
-                <v-text-field label="동" color="#fc2" v-model="addressDong" class="addressInput">
-                </v-text-field>
-              </v-col>
-            </v-row>
-            
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleNd">
-              대여 가능 기간
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-menu
-                  ref="startMenu"
-                  v-model="startMenu"
-                  :close-on-content-click="false"
-                  :return-value.sync="startDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="startDate"
-                      label="시작일"
-                      readonly
-                      v-on="on"
-                      color="#f92"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker v-model="startDate" no-title scrollable color="#f45e61">
-                    <v-spacer></v-spacer>
-                    <v-btn text color="#f45e61" @click="$refs.startMenu.save(startDate)">OK</v-btn>
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-spacer></v-spacer>
-              <v-col cols="12" sm="6" md="4">
-                <v-menu
-                  ref="endMenu"
-                  v-model="endMenu"
-                  :close-on-content-click="false"
-                  :return-value.sync="endDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="endDate"
-                      label="종료일"
-                      readonly
-                      v-on="on"
-                      color="#f92"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker v-model="endDate" no-title scrollable color="#f45e61">
-                    <v-spacer></v-spacer>
-                    <v-btn text color="#f45e61" @click="$refs.endMenu.save(endDate)">OK</v-btn>
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleRd">
-              기간별 대여가격
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent articleDuration">
-            <v-row>
-              <v-col cols="6">
-                <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceDay">
-                </v-text-field>
-              </v-col>
-              <v-col>
-                <span style="margin: 0 10px;">
-                  * 일
-                </span>
-                <v-checkbox color="#f45e61" v-model="checkboxDay" label="" style="display: inline-block;"></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceMonth">
-                </v-text-field>
-              </v-col>
-              <v-col>
-                <span style="margin: 0 10px;">
-                  * 월
-                </span>
-                <v-checkbox color="#f45e61" v-model="checkboxMonth" label="" style="display: inline-block;"></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceYear">
-                </v-text-field>
-              </v-col>
-              <v-col>
-                <span style="margin: 0 10px;">
-                  * 년
-                </span>
-                <v-checkbox color="#f45e61" v-model="checkboxYear" label="" style="display: inline-block;"></v-checkbox>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleNd">
-              제품 설명
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <v-textarea
-              outlined
-              label="자세한 설명 부탁드립니다^^"
-              v-model="description"
-              color="#f92"
-            ></v-textarea>
-            
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col cols="6" sm="3">
-            <p class="articleTitle articleRd">
-              제품 사진
-            </p>
-          </v-col>
-          <v-col cols="12" sm="9" class="articleContent">
-            <div>
-              <input 
-                type="file" 
-                multiple 
-                @change="onFileChange($event.target)"
-                accept="image/*" 
-                style="display: block; margin-bottom: 10px;"/>
-              <div v-for="(image, key) in images" :key="key" id="preview" style="display: inline-block;">
-                <div class="imageMain">
-                  <img :ref="'image'" :id="'test' + key" />
-                  <button @click.prevent="removeImage(key)" class="removeBtn">x</button>
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleNd">
+                대여 가능 기간
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-menu
+                    ref="startMenu"
+                    v-model="startMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="startDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="startDate"
+                        label="시작일"
+                        readonly
+                        v-on="on"
+                        color="#f92"
+                        :rules="requiredRules"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="startDate" no-title scrollable color="#f45e61">
+                      <v-spacer></v-spacer>
+                      <v-btn text color="#f45e61" @click="$refs.startMenu.save(startDate)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-menu
+                    ref="endMenu"
+                    v-model="endMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="endDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="endDate"
+                        label="종료일"
+                        readonly
+                        v-on="on"
+                        color="#f92"
+                        :rules="requiredRules"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="endDate" no-title scrollable color="#f45e61">
+                      <v-spacer></v-spacer>
+                      <v-btn text color="#f45e61" @click="$refs.endMenu.save(endDate)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleRd">
+                기간별 대여가격
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent articleDuration">
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceDay">
+                  </v-text-field>
+                </v-col>
+                <v-col>
+                  <span style="margin: 0 10px;">
+                    * 일
+                  </span>
+                  <v-checkbox color="#f45e61" class="checkDay" v-model="checkboxDay" label="" style="display: inline-block;"></v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceWeek">
+                  </v-text-field>
+                </v-col>
+                <v-col>
+                  <span style="margin: 0 10px;">
+                    * 주
+                  </span>
+                  <v-checkbox color="#f45e61" class="checkWeek" v-model="checkboxWeek" label="" style="display: inline-block;"></v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field type="number" min="0" step="100" color="#fc2" v-model="priceMonth">
+                  </v-text-field>
+                </v-col>
+                <v-col>
+                  <span style="margin: 0 10px;">
+                    * 월
+                  </span>
+                  <v-checkbox color="#f45e61" class="checkMonth" v-model="checkboxMonth" label="" style="display: inline-block;"></v-checkbox>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleNd">
+                제품 설명
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <v-textarea
+                required
+                outlined
+                label="자세한 설명 부탁드립니다^^"
+                v-model="description"
+                color="#f92"
+                :rules="requiredRules"
+              ></v-textarea>
+              
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="6" sm="3">
+              <p class="articleTitle articleRd">
+                제품 사진
+              </p>
+            </v-col>
+            <v-col cols="12" sm="9" class="articleContent">
+              <div>
+                <input 
+                  type="file"
+                  required
+                  :rules="requiredRules"
+                  multiple 
+                  @change="onFileChange($event.target)"
+                  accept="image/*" 
+                  style="display: block; margin-bottom: 10px;"/>
+                <div v-for="(image, key) in images" :key="key" id="preview" style="display: inline-block;">
+                  <div class="imageMain">
+                    <img :ref="'image'" :id="'test' + key" />
+                    <button @click.prevent="removeImage(key)" class="removeBtn">x</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </v-col>
-        </v-row>
-        <v-row justify="center" class="buttons">
-          <button class="articleSubmit draw meet" @click="submitArticle">
-            작성
-          </button>
-        </v-row>
-      </v-col>
-    </v-row>
+            </v-col>
+          </v-row>
+          <v-row justify="center" class="buttons">
+            <button class="articleSubmit draw meet" @click="submitArticle">
+              작성
+            </button>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-form>
   </v-container>
 </template>
 
@@ -228,6 +240,10 @@
 
   @Component
   export default class Article extends Vue{
+    private articleValid = false;
+    private requiredRules = [
+      (v: Vue) => !!v || '입력해주세요',
+    ];
     private product = '';
     private category = '';
     private used = '';
@@ -239,11 +255,11 @@
     private startMenu = false;
     private endMenu = false;
     private checkboxDay = true;
+    private checkboxWeek = true;
     private checkboxMonth = true;
-    private checkboxYear = true;
     private priceDay = 0;
+    private priceWeek = 0;
     private priceMonth = 0;
-    private priceYear = 0;
     private description = '';
     private images: File[] = [];
     private hasSearchValue = false;
@@ -323,29 +339,43 @@
       });
     }
     public submitArticle(): void {
-      const formData = new FormData();
-      for (let i = 0; i < this.images.length; i++) {
-        formData.append("files", this.images[i])
-      }
-      // const data = `{
-      //   productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}", borrowableSrt: "${this.startDate}", borrowableEnd: "${this.endDate}", subscript: "${this.description}", priceDay: "${this.priceDay}", priceWeek: "${this.priceMonth}", priceMonth: "${this.priceYear}"
-      // }`
-      const data = `{
-        productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}"
-      }`
-      console.log(data)
-      console.log(formData)
-      formData.append("boardString", data)
-      
-      baseURL.post('/boards/board', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      if ((this.$refs.articleForm as Vue & { validate: () => boolean }).validate()) {
+        const formData = new FormData();
+        for (let i = 0; i < this.images.length; i++) {
+          formData.append("files", this.images[i])
         }
-      }).then(res => {
-        console.log(res)
-      }).catch((err)=>{
-        alert(err)
-      })
+        let pDay = 0;
+        let pWeek = 0;
+        let pMonth = 0;
+        if (this.checkboxDay) {
+          pDay = this.priceDay;
+        }
+        if (this.checkboxWeek) {
+          pWeek = this.priceWeek;
+        }
+        if (this.checkboxMonth) {
+          pMonth = this.priceMonth;
+        }
+        const data = `{
+          productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}", borrowableSrt: "${this.startDate}T00:00:00", borrowableEnd: "${this.endDate}T00:00:00", subscript: "${this.description}", priceDay: "${pDay}", priceWeek: "${pWeek}", priceMonth: "${pMonth}"
+        }`
+        console.log(data)
+        formData.append("boardString", data)
+        
+        baseURL.post('/boards/board', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        }).then(() => {
+          alert("물품이 등록되었습니다")
+          this.$store.commit('listOff');
+          this.$router.push({
+            name: "Main"
+          })
+        }).catch(()=>{
+          alert("잘못된 시도입니다.")
+        })
+      }
     }
 
   }
@@ -368,7 +398,6 @@
     margin-bottom: 50px;
   }
   .articleMain {
-    padding-top: 40px !important;
     // background-color: rgb(239, 220, 255);
     .articleTitle {
       color: #fff;
@@ -395,6 +424,7 @@
   }
   .page {
     position: relative;
+    padding: 50px 40px !important;
     width: 700px;
     color: #212121;
     border-top-left-radius: 20px 60px;
@@ -409,11 +439,11 @@
       content: ' ';
       background-image: url('../../assets/images/tape.png');
       background-size: cover;
-      width: 150px;
+      width: 30%;
       height: 70px;
       position: absolute;
       top: -40px;
-      left: 40%;
+      left: 35%;
     }
     &:after {
       content: '';
@@ -468,12 +498,12 @@ $orange: #ff8a30;
   border: 0;
   box-sizing: border-box;
   margin: 1em;
-  padding: 1em 2em;
-  
+  padding: 10px 20px;
+
   // Using inset box-shadow instead of border for sizing simplicity
   box-shadow: inset 0 0 0 2px $orange;
   color: black;
-  font-size: inherit;
+  font-size: 1.3em;
   font-weight: 700;
 
   // Required, since we're setting absolute on pseudo-elements
