@@ -17,6 +17,31 @@
 *:focus {
   outline: 0 !important;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+  border-radius: 50px;
+  background-color: transparent;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #f3e1ff; 
+  /* border: 1px solid #f6f5f0; */
+  border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #52077e; 
+}
+
 html {
 
   margin: 0;

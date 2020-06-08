@@ -189,7 +189,12 @@
     border-radius: 350px;
     bottom: -100px;
     left: -100px;
+    z-index: -1;
     background: #8c28b4;
+  }
+  .container {
+    background-color:rgba(255, 255, 255, 0.822);
+    box-shadow: 0px 0px 20px 20px rgba(255, 255, 255, 0.822);
   }
 }
 .searchBar {
@@ -197,7 +202,7 @@
   &:before {
     content: ' ';
     position: absolute;
-    top: -100px;
+    top: -50px;
     width: 50px;
     height: 50px;
     border-radius: 50px;
