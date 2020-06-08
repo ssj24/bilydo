@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import cookie from "@/cookie"
 
 @Component
@@ -111,9 +111,15 @@ export default class App extends Vue{
   get isLogin() {
     return this.$store.state.isLoggedIn;
   }
-  created() {
+  @Watch('name')
+  nameChanged() {
     this.name = cookie.cookieName() as string;
-    this.userId = cookie.cookieId() as string;
+  }
+  created() {
+    if (cookie.token()) {
+      this.name = cookie.cookieName() as string;
+      this.userId = cookie.cookieId() as string;
+    }
   }
 }
 </script>
@@ -152,35 +158,6 @@ a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navT
   position: relative;
   overflow: hidden;
 }
-// .star1 {
-//   position: absolute;
-//   background: radial-gradient(#ffd001, #fff);
-//   width: 10px;
-//   height: 10px;
-//   top: 10px;
-//   left: 0px;
-//   animation: twinkle 2s ease-in infinite;
-// }
-// .star2 {
-//   position: absolute;
-//   background: radial-gradient(#fff0ae, #fff);
-//   width: 10px;
-//   height: 10px;
-//   bottom: 20px;
-//   left: -3px;
-//   animation: twinkle 2s ease-in infinite;
-//   animation-delay: 0.3s;
-// }
-// .star3 {
-//   position: absolute;
-//   background: radial-gradient(#ffd001, #fff);
-//   width: 3px;
-//   height: 3px;
-//   top: 35px;
-//   right: 0px;
-//   animation: twinkle 2s ease-in infinite;
-//   animation-delay: 0.5s;
-// }
 .star4 {
   position: absolute;
   // background: radial-gradient(#f0da7c, #fff);
@@ -190,34 +167,6 @@ a.navTitle, a:link.navTitle, a:visited.navTitle, a:hover.navTitle, a:active.navT
   height: 20px;
   top: 13px;
   right: 24px;
-  // animation: twinkle 2s ease-in-out infinite;
-  // animation-delay: 0.2s;
-}
-// .star5 {
-//   position: absolute;
-//   background: radial-gradient(#ffd001, #fff);
-//   width: 12px;
-//   height: 12px;
-//   bottom: 23px;
-//   left: 35px;
-//   animation: twinkle 2s ease-in infinite;
-//   animation-delay: 0.8s;
-// }
-@keyframes twinkle {
-  0% {
-    opacity: 0;
-  }
-  // 30% {
-  //   opacity: 0.4;
-  // }
-  50% {
-    opacity: 1;
-  }
-  // 80% {
-  //   opacity: 0.4;
-  // }
-  // 100% {
-  //   opacity: 0;
-  // }
+  
 }
 </style>

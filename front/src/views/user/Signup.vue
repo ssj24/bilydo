@@ -203,7 +203,7 @@
 				if (this.$refs.signupForm.validate()) {
 					const data = {
 						email: this.email,
-						location: this.addressCity + '시 ' + this.addressGu + '구 ' + this.addressDong + '동',
+						location: this.addressCity + ' ' + this.addressGu + ' ' + this.addressDong,
 						name: this.name,
 						password: this.password,
 						phone: this.contact

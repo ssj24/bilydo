@@ -39,7 +39,7 @@
           </v-col>
         </v-row>
         <v-row align="center">
-          <v-col cols="6" sm="3">
+          <v-col cols="8" sm="3">
             <p class="articleTitle articleNd">
               대여 가능 기간
             </p>
@@ -65,14 +65,14 @@
           </v-col>
         </v-row>
         <v-row align="center">
-          <v-col cols="6" sm="3">
+          <v-col cols="8" sm="3">
             <p class="articleTitle articleRd">
               기간별 대여가격
             </p>
           </v-col>
           <v-col cols="12" sm="9" class="articleContent articleDuration">
             <v-radio-group v-model="radios" :mandatory="false">
-              <v-row style="padding-left: 20px;">
+              <v-row v-if="priceDay" style="padding-left: 20px; font-size: 1.05em;">
                 <p>
                   {{priceDay}}
                 </p>
@@ -83,7 +83,7 @@
                   <v-radio color="#f45e61" value="checkboxDay" style="display: inline-block; margin-top: 10px;"></v-radio>
                 </v-col>
               </v-row>
-              <v-row style="padding-left: 20px;">
+              <v-row v-if="priceWeek" style="padding-left: 20px; font-size: 1.05em;">
                 <p>
                   {{priceWeek}}
                 </p>
@@ -94,7 +94,7 @@
                   <v-radio color="#f45e61" value="checkboxWeek" style="display: inline-block; margin-top: 10px;"></v-radio>
                 </v-col>
               </v-row>
-              <v-row style="padding-left: 20px;">
+              <v-row v-if="priceMonth" style="padding-left: 20px; font-size: 1.05em;">
                 <p>
                   {{priceMonth}}
                 </p>
@@ -129,10 +129,8 @@
           </v-col>
           <v-col cols="12" sm="9" class="articleContent">
             <div>
-              <div v-for="(image, key) in images" :key="key" id="preview" style="display: inline-block;">
-                <div class="imageMain">
-                  <img :ref="'image'" :id="'test' + key" />
-                </div>
+              <div v-for="(image, key) in images" :key="key" class="images">
+                <img :src="'http://13.125.209.188:8080/'+image" :id="'test' + key" />
               </div>
             </div>
           </v-col>
@@ -146,61 +144,66 @@
             width="60%"
             max-width="80%"
             >
-            <v-card class="contModal">
+            <v-card class="contModal backModal">
               <v-card-title class="modalTitle">
-                ✍️(제공자)님께 대여를 요청합니다
+                <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
+                  {{producer.name}}
+                </router-link>
+                님께 대여를 요청합니다
               </v-card-title>
+                
               <v-card-text style="color: black; font-size: 1rem;">
                 <div>
+                  
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
                       <v-menu
-                        ref="startMenu"
-                        v-model="startMenu"
+                        ref="startMenuModal"
+                        v-model="startMenuModal"
                         :close-on-content-click="false"
-                        :return-value.sync="startDate"
+                        :return-value.sync="startDateModal"
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="startDate"
+                            v-model="startDateModal"
                             label="대여 시작일"
                             readonly
                             v-on="on"
                             color="#f92"
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="startDate" no-title scrollable color="#f45e61">
+                        <v-date-picker v-model="startDateModal" no-title scrollable color="#f45e61">
                           <v-spacer></v-spacer>
-                          <v-btn text color="#f45e61" @click="$refs.startMenu.save(startDate)">OK</v-btn>
+                          <v-btn text color="#f45e61" @click="$refs.startMenuModal.save(startDateModal)">OK</v-btn>
                         </v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-spacer></v-spacer>
                     <v-col cols="12" sm="6" md="4">
                       <v-menu
-                        ref="endMenu"
-                        v-model="endMenu"
+                        ref="endMenuModal"
+                        v-model="endMenuModal"
                         :close-on-content-click="false"
-                        :return-value.sync="endDate"
+                        :return-value.sync="endDateModal"
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="endDate"
+                            v-model="endDateModal"
                             label="대여 종료일"
                             readonly
                             v-on="on"
                             color="#f92"
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="endDate" no-title scrollable color="#f45e61">
+                        <v-date-picker v-model="endDateModal" no-title scrollable color="#f45e61">
                           <v-spacer></v-spacer>
-                          <v-btn text color="#f45e61" @click="$refs.endMenu.save(endDate)">OK</v-btn>
+                          <v-btn text color="#f45e61" @click="$refs.endMenuModal.save(endDateModal)">OK</v-btn>
                         </v-date-picker>
                       </v-menu>
                     </v-col>
@@ -209,17 +212,23 @@
                     예상가격: {{price}}
                   </p>
                   <p>
-                    제공자(path), 평점
+                    연락처: {{producer.phone}}
+                  </p>
+                  <p>
+                    <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
+                      {{producer.name}}
+                    </router-link>
+                    님의 거래 평점: {{producer.score}}점
                   </p>
                 </div>
-                <hr>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn
                   color="#000"
                   style="font-size: 1.05em; margin-bottom: 20px;"
+                  class="submitBtn"
                   outlined
-                  @click="dialogPro = false"
+                  @click="offerCon"
                 >
                   대여 요청
                 </v-btn>
@@ -235,102 +244,173 @@
 
 <script lang="ts">
   import { Component, Vue, Watch } from 'vue-property-decorator'
+  import baseUrl from '@/base-url';
 
   @Component
   export default class Article extends Vue{
-    private boardId = 0;
     private product = '갤럭시 노트10';
     private used = '개봉만 함';
     private address = '대전시 유성구 도룡동';
-    private startDate = new Date().toISOString().substr(0, 10);
-    private endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
+    private startDate = '';
+    private startDateModal = '';
+    private endDate = '';
+    private endDateModal = '';
     private startMenu = false;
+    private startMenuModal = false;
     private endMenu = false;
+    private endMenuModal = false;
     private radios = 'checkboxDay';
     private priceDay = 1000;
     private priceWeek = 100000;
     private priceMonth = 10000;
     private description = '진짜 좋아요 진짜 좋은데 설명할 방법이 없네';
-    private images: File[] = [];
+    private images: string[] = [];
     private dialog = false;
     private price = 0;
+    private boardId = 0;
+    private producerId = 0;
+    private producer: object[] = [];
     
-    public previewImg(): void {
-      for (let i = 0; i < this.images.length; i++) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const test = document.getElementById("test"+i)
-          const result = reader.result;
-          if (test && result) {
-            if (typeof(result) != 'string') {
-              result.toString()
-            } else {
-              test.setAttribute('src', result) 
-            }
-          }
-        }
-        reader.readAsDataURL(this.images[i]);
+    public offerCon(): void {
+      const data = {
+        borrowEnd: this.endDateModal + 'T00:00:00.099Z',
+        borrowSrt: this.startDateModal + 'T00:00:00.099Z',
+        boardId: this.boardId,
+        productId: 1,
+        realRentalFee: this.price
       }
+      baseUrl.post('/boards/user/'+this.boardId+'/request', data)
+      .then(() => {
+        alert(`${this.product} 대여를 요청하셨습니다.`)
+        this.dialog = false;
+      })
     }
-    @Watch('startDate', {
+
+    @Watch('startDateModal', {
       immediate: true
     })
     startDateChanged() {
-      const dateStart = new Date(Date.parse(this.startDate));
-      const dateEnd = new Date(Date.parse(this.endDate));
+      const dateStart = new Date(Date.parse(this.startDateModal));
+      const dateEnd = new Date(Date.parse(this.endDateModal));
       const diffDate = dateEnd.getDate() - dateStart.getDate();
       const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
       const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
       if (this.radios == 'checkboxDay') {
           this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
+          Math.floor(this.price)
       } else if (this.radios == 'checkboxWeek') {
           this.price = (this.priceWeek / 7) * diffDate + (this.priceWeek * 4 * diffMonth) + (this.priceWeek * 4 * 12 * diffYear)
+          Math.floor(this.price)
       } else {
           this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
+          Math.floor(this.price)
       }
-      if (this.price <= 0) {
+      if (this.price < 0) {
         alert("날짜를 다시 설정해주세요")
-        this.startDate = new Date().toISOString().substr(0, 10);
       }
-
     }
-    @Watch('endDate', {
+    @Watch('endDateModal', {
       immediate: true
     })
     endDateChanged() {
-      const dateStart = new Date(Date.parse(this.startDate));
-      const dateEnd = new Date(Date.parse(this.endDate));
+      const dateStart = new Date(Date.parse(this.startDateModal));
+      const dateEnd = new Date(Date.parse(this.endDateModal));
       const diffDate = dateEnd.getDate() - dateStart.getDate();
       const diffMonth = dateEnd.getMonth() - dateStart.getMonth();
       const diffYear = dateEnd.getFullYear() - dateStart.getFullYear();
       if (this.radios == 'checkboxDay') {
           this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
+          this.price = Math.floor(this.price);
       } else if (this.radios == 'checkboxWeek') {
           this.price = (this.priceWeek / 7) * diffDate + (this.priceWeek * 4 * diffMonth) + (this.priceWeek * 4 * 12 * diffYear)
+          this.price = Math.floor(this.price);
       } else {
           this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
+         this.price =  Math.floor(this.price);
       }
-      if (this.price <= 0) {
+      if (this.price < 0) {
+        this.price = 0;
         alert("날짜를 다시 설정해주세요")
-        this.endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
       }
     }
     @Watch('dialog', {
       immediate: true
     })
     dialogClosed() {
-      this.startDate = new Date().toISOString().substr(0, 10);
-      this.endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
       this.price = 0;
     }
     created() {
       this.boardId = Number(this.$route.params.boardId);
+      baseUrl('/boards/'+this.boardId)
+        .then(res => {
+          this.product = res.data.productName;
+          this.used = res.data.usedTime;
+          this.address = res.data.location;
+          this.priceDay = res.data.priceDay;
+          this.priceWeek = res.data.priceWeek;
+          this.priceMonth = res.data.priceMonth;
+          this.description = res.data.subscript;
+          this.images = res.data.imagesPath;
+          this.producerId = res.data.producerId;
+          if (res.data.borrowableSrt && res.data.borrowableEnd) {
+            this.startDate = res.data.borrowableSrt.slice(0, 10);
+            this.endDate = res.data.borrowableEnd.slice(0, 10);
+          }
+          baseUrl('/users/'+res.data.producerId)
+          .then(res=>{
+            this.producer = res.data;
+          })
+        })
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .page {
+  font-weight: 900;
+  font-size: 1.15em;
+}
+.images {
+  display: inline-block;
+  position: relative;
+  margin: 10px;
+  img {
+    width: 200px;
+    height: 200px;
+  }
+  &:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    // background: url('../../assets/images/goldBorder.png');
+    background: url('../../assets/images/crayonBorder.png');
+    background-size: 210px 200px;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+
+  }
+}
+.backModal {
+  background-image: url('../../assets/images/goldBorder.png');
+  background-size: 100% 100%;
+  padding: 60px 20px 20px;
+  .submitBtn {
+    &:hover {
+      font-weight: 900;
+      transform: scale(1.05);
+    }
+  }
+}
+.contModal .modalTitle {
+  font-size: 1.5em !important;
+}
+.contModal p {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.toAccount:hover {
+  transform: scale(1.1);
   font-weight: 900;
 }
 </style>

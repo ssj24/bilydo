@@ -1,17 +1,16 @@
 <template>
-  <v-container>
-      <v-row>
-        <v-col cols="5" sm="8" md="9"></v-col>
-        <v-col cols=7 sm="4" md="3">
-          <h2 style="font-family: 'ON-IGothic'; font-weight: 900; display: inline-block;">
-            {{userName}}
-          </h2>
-          <h3 style="font-family: 'ON-IGothic'; display: inline-block;">님의 정보</h3>
-        </v-col>
-      </v-row>
-    
+  <v-container class="accountWrap">
+    <v-row>
+      <v-col cols="5" sm="8" md="9"></v-col>
+      <v-col cols=7 sm="4" md="3">
+        <h2 style="margin-top: 10px; margin-bottom: 10px; font-family: 'ON-IGothic'; font-weight: 900; display: inline-block;">
+          {{userName}}
+        </h2>
+        <h3 style="font-family: 'ON-IGothic'; display: inline-block;">님의 정보</h3>
+      </v-col>
+    </v-row>
     <v-row justify="center">
-      <v-col cols="12" sm="10" class="attrs" style="margin-top: 20px; border-top: 3px solid #8c28b4;">
+      <v-col cols="12" sm="10" class="attrs">
         <v-row align="center">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
@@ -83,10 +82,34 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <span v-for="i in averagePoint" :key="i">
-              💖
+            <span v-if="averagePoint">
+              <span v-for="i in averagePoint" :key="i">
+                💖
+              </span>
+              {{averagePoint}}/5 
             </span>
-            {{averagePoint}}/5
+            <span v-else>
+              아직 점수가 없습니다
+            </span>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              게시글
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <v-btn
+              color="#8c28b4"
+              outlined
+              @click="messagesReset"
+              @click.stop="dialogPro = true;"
+            >
+              <span style="color: #000; font-size: 1.2em; font-weight: 900;">
+                {{contracts.length}}
+              </span>
+            </v-btn>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -125,7 +148,7 @@
                 <v-card-title class="modalTitle">
                   📖{{userName}}님의 진행 중인 거래 {{contractProgress.length}}건
                 </v-card-title>
-                <p style="text-align: end; margin-right: 20px;">
+                <p v-if="false" style="text-align: end; margin-right: 20px;">
                   <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
                   <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
                 </p>
@@ -134,12 +157,12 @@
                     <v-col cols="11" md="8">
                       <v-row justify="center">
                         <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
-                          <a :href="cont.path">
-                            {{cont.name}}
-                          </a>
+                          <router-link :to="{name:'Detail', params:{boardId:cont.id}}">
+                            {{cont.productName}}
+                          </router-link>
                         </v-col>
                         <v-col cols="11" sm="3" class="d-flex justify-center align-center t-center">
-                          등록일(cont.date)
+                          {{ cont.registDate }}
                         </v-col>
                         <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
                           <v-btn
@@ -157,7 +180,7 @@
                             v-else class="distRoleBo"
                             style="font-weight: 900;"
                           >
-                            {{cont.state}}
+                            거래 대기
                           </v-btn>
                         </v-col>
                       </v-row>
@@ -171,46 +194,61 @@
                   max-width="80%"
                   >
                   <v-card class="reviewModal">
-                    <v-card-title class="modalTitle">
-                      <a :href="data.path">[data.category]{{data.name}}</a> - data.state
-                    </v-card-title>
-
-                    <v-card-text style="color: #000; font-weight: 900;">
-                      <p v-if="data.role == '제공자'">⭕ 대여자 이름 - 연락처</p>
-                      <p v-else>⭕ 제공자 이름 - 연락처</p>
-                      <p>⭕ 대여신청시작일~대여신청종료일</p>
-                      <label for="finalprice" style="margin-right: 20px;">⭕ 최종 가격</label>
-                      <input 
-                        id="finalprice" 
-                        type="number" min=0 step="100" 
-                        v-model="data.price"
-                        style="border-bottom: 1px solid black; margin-bottom: 20px;"
-                      >
-                      <v-row justify="center">
-                        <v-btn
-                          color="#f66"
-                          outlined
-                          fab
-                          dark
-                          style="margin-right: 20px;"
-                          >
-                          <span style="color: #000; font-weight: 900; font-size: 1.1em;">
-                            거절
-                          </span>
-                        </v-btn>
-                        
-                        <v-btn
-                          color="green"
-                          outlined
-                          fab
-                          dark
-                          >
-                          <span style="color: #000; font-weight: 900; font-size: 1.1em;">
-                            수락
-                          </span>
-                        </v-btn>
-                      </v-row>
-                    </v-card-text>
+                    <span v-for="(offer, i) in offerData" :key="i">
+                      <v-card-text style="color: #000; font-weight: 900;">
+                          {{data}}
+                          <br>
+                          {{consumerData}}
+                          <br>
+                          offer {{offer}}
+                        <p v-if="data.role == '대여자'">⭕ 제공자 이름 - 연락처</p>
+                        <p v-else>⭕ 
+                          <router-link :to="{name:'Account', params:{userId: offer.consumerId}}">
+                            sdfjl;sdfjl;
+                          </router-link>
+                          (평점: {{consumerData.score}})
+                          대여 신청자 이름 - 연락처</p>
+                        <p>⭕ 대여 신청 기간: 
+                          {{offer.borrowSrt}} ~ {{offer.borrowEnd}}
+                        </p>
+                      <p>
+                          ⭕ 예상 가격: {{offer.realRentalFee}}
+                        </p>
+                        <label for="finalprice" style="margin-right: 20px;">⭕ 최종 가격</label>
+                        <input 
+                          id="finalprice" 
+                          type="number" min=0 step="100" 
+                          v-model="finalPrice"
+                          style="border-bottom: 1px solid black; margin-bottom: 20px;"
+                        >
+                        <v-row justify="center">
+                          <v-btn
+                            color="#f66"
+                            outlined
+                            fab
+                            dark
+                            style="margin-right: 20px;"
+                            >
+                            <span style="color: #000; font-weight: 900; font-size: 1.1em;">
+                              거절
+                            </span>
+                          </v-btn>
+                          
+                          <v-btn
+                            color="green"
+                            outlined
+                            fab
+                            dark
+                            @click="acceptOffer(offer.id)"
+                            >
+                            <span style="color: #000; font-weight: 900; font-size: 1.1em;">
+                              수락
+                            </span>
+                          </v-btn>
+                        </v-row>
+                      </v-card-text>
+                      <hr>
+                    </span>
                   </v-card>
                 </v-dialog>
 
@@ -256,7 +294,7 @@
                 <v-card-title class="modalTitle">
                   📚{{userName}}님의 완료된 거래 {{contractComplete.length}}건
                 </v-card-title>
-                <p style="text-align: end; margin-right: 20px;">
+                <p v-if="false" style="text-align: end; margin-right: 20px;">
                   <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
                   <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
                 </p>
@@ -265,9 +303,10 @@
                     <v-col cols="11" md="8">
                       <v-row justify="center">
                         <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
-                          <a :href="cont.path">
-                            {{cont.name}}
-                          </a>
+                          <router-link :to="{name:'Detail', params:{boardId:cont.id}}">
+                            {{cont.productName}}
+                          </router-link>
+                          
                         </v-col>
                         <v-col cols="11" sm="3" class="d-flex justify-center align-center t-center">
                           대여 기간
@@ -336,19 +375,6 @@
         <v-card-title class="modalTitle" v-else>
           대여인!에 대한 리뷰를 남겨주세요
         </v-card-title>
-        <!-- LIKE -->
-        <!-- <section id="like" class="heart">
-          <input type="radio" id="heart_5" name="like" value="5" />
-          <label for="heart_5" title="Five">&#10084;</label>
-          <input type="radio" id="heart_4" name="like" value="4" />
-          <label for="heart_4" title="Four">&#10084;</label>
-          <input type="radio" id="heart_3" name="like" value="3" />
-          <label for="heart_3" title="Three">&#10084;</label>
-          <input type="radio" id="heart_2" name="like" value="2" />
-          <label for="heart_2" title="Two">&#10084;</label>
-          <input type="radio" id="heart_1" name="like" value="1" />
-          <label for="heart_1" title="One">&#10084;</label>
-        </section> -->
         <div class="starContainer">
           <div class="feedback">
             <div class="rating">
@@ -474,85 +500,33 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator'
+  import { Component, Vue, Watch } from 'vue-property-decorator'
   import cookie from "@/cookie" 
   import baseURL from '../../base-url';
+  import { TradeRules } from '@/models/rules/TradeRules'
+  import { OfferData } from '@/models/rules/OfferData'
 
   @Component
   export default class Account extends Vue {
     private userPassword = '비밀번호 변경';
     private newPassword = '';
-    private userName = cookie.cookieName();
-    private userContact = '010-1234-5678';
-    private userAddress = cookie.cookieLocation();
+    private userName = '';
+    private userContact = '';
+    private userAddress = '';
     private averagePoint = 5;
-    private contractProgress: object[] = [
-      {
-        name: '아이패드 6세대',
-        path: '/',
-        state: '대여 요청 중',
-        role: '제공자',
-        dateStart: '20200607',
-        dateEnd: '20200707',
-        price: 20000
-      },
-      {
-        name: '아이패드 6세대',
-        path: '/',
-        state: '대여 중',
-        role: '대여자',
-        dateStart: '20200607',
-        dateEnd: '20210607',
-        price: 200000
-      },
-      {
-        name: '아이패드 6세대',
-        path: '/',
-        state: '반납 완료',
-        role: '제공자',
-        dateStart: '20200607',
-        dateEnd: '20200807',
-        price: 10000
-      },
-      {
-        name: '아이패드 6세대아이패드 6세대아이패드 6세대',
-        path: '/',
-        state: '거래 완료',
-        role: '제공자',
-        dateStart: '20200907',
-        dateEnd: '20200912',
-        price: 3000
-      }
-    ];
-    private contractComplete: object[] = [
-      {
-        name: '아이패드 1세대',
-        path: '/',
-      },
-      {
-        name: '아이패드 3세대',
-        path: '/',
-      },
-      {
-        name: '아이패드 4세대',
-        path: '/',
-      },
-      {
-        name: '아이패드 6세대',
-        path: '/',
-      },
-    ];
+    private contractProgress: TradeRules[] = [];
+    private contractComplete: TradeRules[] = [];
+    private contracts: TradeRules[] = [];
     private dialogPro = false;
     private dialogCom = false;
     private dialogReview = false;
     private dialogReviewPro = false;
     private data: object = {};
-    private review: object = {
-        reviewer: '대여자',
-        reviewee: '제공자',
-        star: 1,
-        review: ''
-      };
+    private offerData: OfferData[] = [];
+    private consumerData: object[] = [];
+    private review: object = {};
+    private chk = 0;
+    private finalPrice = 0;
 
     public appendInput(target: HTMLElement): void {
       const appendTarget: HTMLElement | null = target.parentElement;
@@ -572,13 +546,36 @@
         }
       }
     }
-    public showDialogReview(cont: object): boolean {
+    public showDialogReview(cont: TradeRules): boolean {
       this.data = cont;
       return this.dialogReview = true;
     }
-    public showDialogReviewPro(cont: object): boolean {
+    public showDialogReviewPro(cont: TradeRules): void {
       this.data = cont;
-      return this.dialogReviewPro = true;
+      baseURL('/boards/user/'+cont.id+'/requests')
+      .then(res=>{
+        if (res.data.length) {
+          for (let i = 0; i < res.data.length; i++) {
+            baseURL('/users/'+res.data[i].consumerId)
+            .then(response => {
+              this.consumerData[i] = response.data;
+            })
+            if (res.data[i].borrowSrt && res.data[i].borrowEnd) {
+              this.offerData.push(res.data[i])
+              this.offerData[i].borrowSrt = this.offerData[i].borrowSrt.slice(0, 10)
+              this.offerData[i].borrowEnd = this.offerData[i].borrowEnd.slice(0, 10)
+              }
+          }
+          if (this.consumerData) {
+            this.dialogReviewPro = true;
+          }
+          console.log(this.data)
+          console.log('o', this.offerData)
+          console.log('c', this.consumerData)
+        } else {
+          this.dialogReviewPro = false;
+        }
+      })
     }
     public messagesReset(): void {
       this.$store.commit('messagesReset');
@@ -592,33 +589,97 @@
           document.getElementsByClassName('rating')[0].getElementsByTagName("input")[i].checked=false;
         }
       }
-      // const heartV = document.getElementsByClassName('heart')[0].getElementsByTagName("input");
-      // for (let i = 0; i < heartV.length; i++) {
-      //   if (heartV[i].type === 'radio' && heartV[i].checked) {
-      //     const hValue = heartV[i].value;
-      //     console.log(hValue)
-      //     document.getElementsByClassName('heart')[0].getElementsByTagName("input")[i].checked=false;
-      //     // this.review.review = '';
-      //   }
-      // }
     }
     public updateUser(): void {
-      const data = {
-        id: cookie.cookieId(),
-        location: this.userAddress,
-        name: this.userName,
-        password: this.newPassword,
-        phone: this.userContact
+      if (cookie.cookieId() && this.userAddress && this.userName) {
+        const data = {
+          id: cookie.cookieId(),
+          location: this.userAddress,
+          name: this.userName,
+          password: this.newPassword,
+          phone: this.userContact
+        }
+        const loginData = {
+          token: cookie.token() as string,
+          id: Number(data.id),
+          location: data.location,
+          name: data.name,
+          password: data.password,
+          phone: data.phone,
+          email: ''
+        }
+        if (loginData.token) {
+          baseURL.put('/users', data)
+            .then(() => {
+              cookie.setCookie(loginData);
+              this.$store.commit('loggedIn', loginData);
+              this.$store.commit('isLogin');
+              alert("정보 수정이 완료되었습니다.")
+            })
+            .catch(() => {
+              alert("잘못된 시도입니다.")
+            })
+        }
       }
-      baseURL.put('/users', data)
-        .then(() => {
-          alert("정보 수정이 완료되었습니다.")
-        })
-        .catch(() => {
-          alert("잘못된 시도입니다.")
+    }
+    @Watch('contracts')
+    checkContracts() {
+      if (this.contracts.length == this.chk) {
+        for (let i = 0; i < this.contracts.length; i++) {
+          if (this.contracts[i].state == "READY") {
+            if (this.contracts[i].borrowableEnd && this.contracts[i].borrowableSrt) {
+              this.contracts[i].borrowableEnd = this.contracts[i].borrowableEnd.slice(0, 10);
+              this.contracts[i].borrowableSrt = this.contracts[i].borrowableSrt.slice(0, 10);
+            }
+            this.contracts[i].registDate = this.contracts[i].registDate.slice(0, 10);
+            this.contractProgress.push(this.contracts[i]);
+          } else {
+            if (this.contracts[i].borrowableEnd && this.contracts[i].borrowableSrt) {
+              this.contracts[i].borrowableEnd = this.contracts[i].borrowableEnd.slice(0, 10);
+              this.contracts[i].borrowableSrt = this.contracts[i].borrowableSrt.slice(0, 10);
+            }
+            this.contracts[i].registDate = this.contracts[i].registDate.slice(0, 10);
+            this.contractComplete.push(this.contracts[i])
+          }
+        }
+      }
+      }
+    @Watch('dialogReviewPro')
+    dialogReviewProClosed() {
+      if (!this.dialogReviewPro) {
+        this.data = {};
+        this.consumerData = [];
+        this.offerData = [];
+      }
+    }
+    public getContracts(): void {
+      baseURL('/users/user/boards?page=0&size=10')
+        .then(res=> {
+          // content의 board state를 보고 진행 중 거래와 진행 완료 거래로 나누기
+          const totalPages = res.data.totalPages;
+          this.contracts = res.data.content;
+          this.chk = res.data.totalElements;
+          if (totalPages > 1) {
+            for (let i = 1; i < totalPages; i++) {
+              baseURL('/users/user/boards?page='+i+'&size=10')
+              .then(response => {
+                this.contracts = this.contracts.concat(response.data.content);
+              })
+            }
+          }
         })
     }
+    public acceptOffer(id: number): void {
+      baseURL.put('/boards/user/requests/'+id)
+      .then(() => {
+        alert("요청을 수락하셨습니다")
+      })
+      .catch(() => {
+        alert("잘못된 시도입니다")
+      })
+    }
     created() {
+      this.getContracts();
       baseURL('/users/user')
       .then(res => {
         this.userName = res.data.name;
@@ -626,16 +687,26 @@
         this.userContact = res.data.phone;
         this.userAddress = res.data.location;
       })
-      // baseURL('/users/user/boards?page=0&size=10')
-      //   .then(res=> {
-      //     // content의 board state를 보고 진행 중 거래와 진행 완료 거래로 나누기
-      //     this.contractProgress = res.data.content;
-      //   })
+      baseURL('/users/'+cookie.cookieId())
+      .then(res=>{
+        this.averagePoint = res.data.score;
+      })
     }
   }
 </script>
 
 <style lang="scss">
+.accountWrap {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  position: relative;
+  // background-image: url('../../assets/images/goldBorder.png');
+  background-size: cover;
+  
+}
+
+
 .vBtn {
   position: relative;
   min-width: 50px !important;
@@ -650,6 +721,24 @@
 }
 .container {
   .attrs {
+    margin-top: 20px; 
+    background-color: rgba(255, 255, 255, 0.705);
+    position: relative;
+    // border-top: 5px solid;
+    // border-image: linear-gradient(to left, #be85ff, rgb(255, 238, 0));
+    // border-image-slice: 1;
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 3px;
+      width: 100%;
+      border-radius: 5px;
+      background: linear-gradient(-45deg, #d68cf3, #ffd986, #ff96d3);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
     .accountTitle {
       padding: 0.5rem 2rem;
       display: flex;
@@ -692,6 +781,17 @@
       border-bottom: 1px solid black;
     }
   }
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 .accountTitle + .accountTitle {
   // border-top: 1px solid rgba(197, 197, 197, 0.9);

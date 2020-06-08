@@ -15,7 +15,7 @@ export default new Vuex.Store({
     name: '',
     phone: '',
     location: '',
-    messages: 1
+    messages: 0
   },
   getters,
   mutations,

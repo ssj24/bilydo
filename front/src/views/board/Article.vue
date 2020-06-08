@@ -1,6 +1,5 @@
 <template>
-  <v-container>
-    <div class="particles"></div>
+  <v-container class="articleWrap">
     <v-form ref="articleForm" v-model="articleValid" lazy-validation @submit.prevent>
       <v-row justify="center">
         <v-col cols="11" sm="10" class="articleMain page">
@@ -377,11 +376,14 @@
         })
       }
     }
-
   }
 </script>
 
 <style lang="scss">
+  .articleWrap {
+    overflow: hidden;
+    
+  }
 
   #preview {
     display: flex;
@@ -393,12 +395,11 @@
     width: 75px;
     height: 75px;
   }
-  .container {
-    margin-top: 50px;
-    margin-bottom: 50px;
-  }
+  
   .articleMain {
     // background-color: rgb(239, 220, 255);
+    margin: 50px auto;
+    z-index: 2;
     .articleTitle {
       color: #fff;
       padding: 5%;
@@ -437,13 +438,14 @@
     -webkit-box-shadow: 0 2px 10px 1px rgba(0, 0, 0, .2);
     &:before {
       content: ' ';
-      background-image: url('../../assets/images/tape.png');
+      background-image: url('../../assets/images/masking2.png');
       background-size: cover;
-      width: 30%;
-      height: 70px;
+      width: 35%;
+      height: 50px;
       position: absolute;
-      top: -40px;
-      left: 35%;
+      top: -25px;
+      left: 32%;
+      transform: rotate(357deg);
     }
     &:after {
       content: '';
@@ -451,7 +453,7 @@
       height: 45px;
       background-image:url('https://ecorelos.com/wp-content/uploads/2020/04/torn-border2.png');
       position:absolute;
-      bottom:-15px;
+      bottom:-13px;
       width:100%;
       left:0px;   
     }
@@ -503,7 +505,7 @@ $orange: #ff8a30;
   // Using inset box-shadow instead of border for sizing simplicity
   box-shadow: inset 0 0 0 2px $orange;
   color: black;
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: 700;
 
   // Required, since we're setting absolute on pseudo-elements

@@ -57,27 +57,27 @@
               v-for="(recent, i) in recentBoards"
               :key="recent+i"
             >
-            
-              <v-sheet
-                v-if="recent.imagesPath"
-                height="300"
-                tile
-                :style="{'background-image': 'url(http://13.125.209.188:8080/'+recent.imagesPath[0]+')'}"
-                style="background-size: cover;"
-              >
-                <v-row
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <!-- <div
-                    class="display-1"
-                   >{{ recent.product }}</div> -->
-                </v-row>
-              </v-sheet>
               <router-link 
                 :to="{name:'Detail', params:{boardId:recent.id}}"
                 >
+                <v-sheet
+                  v-if="recent.imagesPath"
+                  height="300"
+                  tile
+                  :style="{'background-image': 'url(http://13.125.209.188:8080/'+recent.imagesPath[0]+')'}"
+                  style="background-size: cover;"
+                  class="imageSheet"
+                >
+                  <v-row
+                    class="fill-height"
+                    align="center"
+                    justify="center"
+                  >
+                    <!-- <div
+                      class="display-1"
+                    >{{ recent.product }}</div> -->
+                  </v-row>
+                </v-sheet>
                 <div class="carouselBottom pa-3">
                   <div class="overline mb-1">{{ recent.category }}</div>
                   <v-list-item-title class="mb-1 productName">{{ recent.productName }}</v-list-item-title>
@@ -127,7 +127,7 @@
 
 <style lang="scss">
 .theme--light.v-data-table {
-  background-color:rgba(255, 255, 255, 0.822) !important;
+  // background-color:rgba(255, 255, 255, 0.822) !important;
   tr:hover {
     // background-color: rgb(248, 237, 255) !important;
     background-image: radial-gradient(closest-side, #fffaba, #fff) !important;
@@ -217,6 +217,19 @@
     }
   }
 }
+.v-carousel {
+  position:relative;
+  &:after {
+    content: '';
+    // background-image: url('../../assets/images/bottomBorder.png');
+    // background-size: cover;
+    // width: 78%;
+    // height: 50px;
+    // position: absolute;
+    // left: 50px;
+    // bottom: 90px;
+  }
+}
 .recentBoards .productName {
   font-size: 20px;
   font-weight: 900;
@@ -232,52 +245,7 @@
 .v-application .elevation-24 {
   box-shadow: none !important;
 }
-.ribbon1 {
-  z-index: 2;
-  position: absolute;
-  top: -6.1px;
-  right: 10px;
-}
-.ribbon1:after {
-  position: absolute;
-  content: "";
-  width: 0;
-  height: 0;
-  border-left: 60px solid transparent;
-  border-right: 60px solid transparent;
-  border-top: 10px solid #e2f0f9;
-}
-.ribbon1 span {
-  position: relative;
-  display: block;
-  text-align: center;
-  background: #e2f0f9;
-  font-size: 1em;
-  font-weight: 500;
-  line-height: 1;
-  padding: 12px 8px 10px;
-  border-top-right-radius: 8px;
-  width: 120px;
-}
-.ribbon1 span:before, .ribbon1 span:after {
-  position: absolute;
-  content: "";
-}
-.ribbon1 span:before {
-  height: 6px;
-  width: 6px;
-  left: -6px;
-  top: 0;
-  background: #e2f0f9;
-}
-.ribbon1 span:after {
-  height: 6px;
-  width: 8px;
-  left: -8px;
-  top: 0;
-  border-radius: 8px 8px 0 0;
-  background: #285fb4;
-}
+
 .ribbon2 {
   width: 70px;
   padding: 15px 10px 40px;
@@ -352,85 +320,6 @@
   border-bottom: 25px solid transparent;
   border-left: 15px solid #f9eaff;
 }
-.ribbon4 {
-  position: absolute;
-  top: 15px;
-  padding: 8px 10px;
-  background: #00B3ED;
-  box-shadow: -1px 2px 3px rgba(0,0,0,.3);
-}
-.ribbon4:before, .ribbon4:after {
-  content: "";
-  position: absolute;
-}
-.ribbon4:before {
-  width: 7px;
-  height: 100%;
-  top: 0;
-  left: -6.5px;
-  padding: 0 0 7px;
-  background: inherit;
-  border-radius: 5px 0 0 5px;
-}
-.ribbon4:after {
-  width: 5px;
-  height: 5px;
-  bottom: -5px;
-  left: -4.5px;
-  background: lightblue;
-  border-radius: 5px 0 0 5px;
- }
-.ribbon5 {
-  display: block;
-  width: calc(100% + 20px);
-  height: 50px;
-  line-height: 50px;
-  text-align: center;
-  margin-left: -10px;
-  margin-right: -10px;
-  background: #EDBA19;
-  position: relative;
-  top: 20px;
-}
-.ribbon5:before, .ribbon5:after {
-  content: "";
-  position: absolute;
-}
-.ribbon5:before {
-  height: 0;
-  width: 0;
-  bottom: -10px;
-  left: 0;
-  border-top: 10px solid #cd8d11;
-  border-left: 10px solid transparent;
-}
-.ribbon5:after {
-  height: 0;
-  width: 0;
-  right: 0;
-  bottom: -10px;
-  border-top: 10px solid #cd8d11;
-  border-right: 10px solid transparent;
-}
-
-.ribbon6 {
-  width: 200px;
-  height: 50px;
-  line-height: 40px;
-  position: absolute;
-  bottom: 0px;
-  right: -60px;
-  z-index: 2;
-  overflow: hidden;
-  -webkit-transform: rotate(135deg);
-  transform: rotate(135deg);
-  // border: 1px dashed;
-  // box-shadow:0 0 0 3px #57DD43,  0px 21px 5px -18px rgba(0,0,0,0.6);
-  background: #f9eaff;
-  text-align: center;
-}
-
-
 
 
 </style>
