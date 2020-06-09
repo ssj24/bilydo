@@ -5,7 +5,6 @@
   </div>
   <div class="cir3"></div>
   <v-container>
-    
     <v-row justify="center" class="searchSection">
       <v-col cols="9" class="searchBar">
         <v-row justify="center">

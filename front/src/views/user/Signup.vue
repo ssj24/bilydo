@@ -40,6 +40,7 @@
 								id="contactInput"
 								maxlength="13"
 								color="black"
+								label="연락처"
 								pattern="[\+]\d{2}[\(]\d{2}[\)]\d{4}[\-]\d{4}"
 								v-model="contact"
 								:rules="contactRules"
