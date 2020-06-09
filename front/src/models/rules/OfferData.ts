@@ -1,4 +1,5 @@
 export interface OfferData {
-  borrowSrt: string,
-  borrowEnd: string
+  id?: number,
+  borrowSrt?: string,
+  borrowEnd?: string
 }
