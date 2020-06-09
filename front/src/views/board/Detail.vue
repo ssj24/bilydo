@@ -130,7 +130,7 @@
           <v-col cols="12" sm="9" class="articleContent">
             <div>
               <div v-for="(image, key) in images" :key="key" class="images">
-                <img :src="'https://k02b2071.p.ssafy.io/'+image" :id="'test' + key" />
+                <img :src="'http://13.125.209.188:8080/'+image" :id="'test' + key" />
               </div>
             </div>
           </v-col>
