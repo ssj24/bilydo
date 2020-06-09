@@ -1,4 +1,4 @@
 export interface ObjWArr {
-  obj: object,
+  obj?: object,
   arr: object[]
 }

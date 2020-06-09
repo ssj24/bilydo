@@ -130,19 +130,21 @@
           <v-col cols="12" sm="9" class="articleContent">
             <div>
               <div v-for="(image, key) in images" :key="key" class="images">
-                <img :src="'http://13.125.209.188:8080/'+image" :id="'test' + key" />
+                <img :src="'https://k02b2071.p.ssafy.io/'+image" :id="'test' + key" />
               </div>
             </div>
           </v-col>
         </v-row>
         <v-row justify="center" class="buttons">
-          <button class="articleSubmit draw meet" @click.stop="dialog = true">
+          <button class="articleSubmit draw meet" @click.stop="chkRadios">
             대여하기
           </button>
+        </v-row>
+      </v-col>
+    </v-row>
           <v-dialog
             v-model="dialog"
-            width="60%"
-            max-width="80%"
+            max-width="512px"
             >
             <v-card class="contModal backModal">
               <v-card-title class="modalTitle">
@@ -235,9 +237,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-row>
-      </v-col>
-    </v-row>
     
   </v-container>
 </template>
@@ -248,9 +247,9 @@
 
   @Component
   export default class Article extends Vue{
-    private product = '갤럭시 노트10';
-    private used = '개봉만 함';
-    private address = '대전시 유성구 도룡동';
+    private product = '';
+    private used = '';
+    private address = '';
     private startDate = '';
     private startDateModal = '';
     private endDate = '';
@@ -259,11 +258,11 @@
     private startMenuModal = false;
     private endMenu = false;
     private endMenuModal = false;
-    private radios = 'checkboxDay';
-    private priceDay = 1000;
-    private priceWeek = 100000;
-    private priceMonth = 10000;
-    private description = '진짜 좋아요 진짜 좋은데 설명할 방법이 없네';
+    private radios = '';
+    private priceDay = 0;
+    private priceWeek = 0;
+    private priceMonth = 0;
+    private description = '';
     private images: string[] = [];
     private dialog = false;
     private price = 0;
@@ -280,9 +279,13 @@
         realRentalFee: this.price
       }
       baseUrl.post('/boards/user/'+this.boardId+'/request', data)
-      .then(() => {
+      .then(res => {
+        console.log(res)
         alert(`${this.product} 대여를 요청하셨습니다.`)
         this.dialog = false;
+      })
+      .catch(() => {
+        alert("잘못된 시도입니다. 대여 가능 기간을 확인해 주세요.")
       })
     }
 
@@ -330,7 +333,15 @@
       }
       if (this.price < 0) {
         this.price = 0;
-        alert("날짜를 다시 설정해주세요")
+        alert("날짜를 다시 설정해주세요.")
+      }
+    }
+    public chkRadios(): boolean {
+      if (this.radios) {
+        return this.dialog = true;
+      } else {
+        alert("기간별 대여가격을 선택해주세요.")
+        return this.dialog = false;
       }
     }
     @Watch('dialog', {

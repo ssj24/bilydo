@@ -64,7 +64,7 @@
                   v-if="recent.imagesPath"
                   height="300"
                   tile
-                  :style="{'background-image': 'url(http://13.125.209.188:8080/'+recent.imagesPath[0]+')'}"
+                  :style="{'background-image': 'url(https://k02b2071.p.ssafy.io/'+recent.imagesPath[0]+')'}"
                   style="background-size: cover;"
                   class="imageSheet"
                 >
