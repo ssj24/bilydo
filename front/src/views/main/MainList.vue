@@ -10,7 +10,7 @@
         <!-- <p class="ribbon">
           <span class="text"><strong class="bold">지역별 현황</strong></span>
         </p> -->
-        <v-simple-table>
+        <v-simple-table v-if="regionBoards.length">
           <template v-slot:default>
             <tbody>
               <tr
@@ -35,6 +35,10 @@
             </tbody>
           </template>
         </v-simple-table>
+        <v-row v-else align-content="center" justify="center" style="height: 100%; font-weight: 900;">
+          해당 지역에 올라온 글이 없습니다. <br>
+          {{name}}님이 물건을 등록해 보시는 건 어떨까요?
+        </v-row>
       </v-col>
       <v-col
         v-if="true"
@@ -115,12 +119,20 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator'
+  import cookie from '@/cookie'
 
   @Component
   export default class MainList extends Vue{
     @Prop() regionBoards!: object[]
     @Prop() recentBoards!: object[]
     @Prop() userAddress!: string
+
+    private name = '';
+    mounted() {
+      if (cookie.cookieName()) {
+        this.name = cookie.cookieName() as string;
+      }
+    }
   }
   
 </script>
