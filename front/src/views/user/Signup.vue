@@ -5,35 +5,38 @@
 			<v-container class="form-structor">
 				<v-form ref="signupForm" v-model="signupValid" lazy-validation @submit.prevent>
 					<div class="signup slide-up">
-						<h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+						<h2 class="form-title" id="signup"><span>or</span>회원가입</h2>
 						<div class="form-holder">
 							<v-text-field
 								type="text" 
 								class="input"
 								color="black"
-								label="Name" 
+								label="이름" 
 								v-model="name"
 								:rules="nameRules"
 								required
-								/>
+								>
+							</v-text-field>
 							<v-text-field 
 								type="email" 
 								class="input" 
 								color="black"
-								label="Email" 
+								label="이메일" 
 								v-model="email"
 								:rules="emailRules"
 								required
-								/>
+								>
+							</v-text-field>
 							<v-text-field
 								type="password"
 								class="input" 
 								color="black"
-								label="Password" 
+								label="비밀번호" 
 								v-model="password"
 								:rules="passwordRules"
 								required
-								/>
+								>
+							</v-text-field>
 							<v-text-field
 								type="tel" 
 								class="input"
@@ -45,77 +48,94 @@
 								v-model="contact"
 								:rules="contactRules"
 								required
-								/>
+								>
+							</v-text-field>
+							
 							<v-row>
-								<v-col cols="6" sm="4">
-
+								<v-col cols="8">
 									<v-text-field
-									type="text" 
-									class="input" 
-									color="black"
-									label="시/도" 
-									v-model="addressCity"
-									:rules="addressRules"
-									required
-									/>
+										type="text" 
+										class="input"
+										color="black" 
+										label="주소"
+										v-model="result"
+										:rules="contactRules"
+										required
+										disabled
+										>
+									</v-text-field>
 								</v-col>
-								<v-col cols="6" sm="4">
+								<v-col>
+									<div class="text-center">
+								<v-dialog
+									v-model="dialog"
+									width="500"
+								>
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn
+											color="#8c28b4"
+											dark
+											v-bind="attrs"
+											v-on="on"
+										>
+											주소
+										</v-btn>
+									</template>
 
-									<v-text-field
-									type="text" 
-									class="input" 
-									color="black"
-									label="군/구" 
-									v-model="addressGu"
-									:rules="addressRules"
-									required
-									/>
-								</v-col>
-								<v-col cols="6" sm="4" class="dongInput">
-
-									<v-text-field
-									type="text" 
-									class="input" 
-									color="black"
-									label="00동" 
-									v-model="addressDong"
-									:rules="addressRules"
-									required
-									/>
+									<v-card>
+										<v-card-title
+											class="headline"
+											style="background-color: #8c28b4; color: #fff;"
+											primary-title
+										>
+											주소: {{result}}
+											<v-spacer></v-spacer>
+											<span @click="dialog = false" style="cursor: pointer;">
+												확인
+											</span>
+										</v-card-title>
+										<vue-daum-postcode @complete="result = $event.address"/>
+									</v-card>
+								</v-dialog>
+							</div>
 								</v-col>
 							</v-row>
 						</div>
-						<button class="submit-btn" @click="signup">Sign up</button>
+						<button class="submit-btn" @click="signup">회원가입</button>
 					</div>
 				</v-form>
 				<v-form ref="loginForm" v-model="loginValid" lazy-validation @submit.prevent>
 					<div class="login">
 						<div class="center">
-							<h2 class="form-title" id="login"><span>or</span>Log in</h2>
+							<h2 class="form-title" id="login"><span>or</span>로그인</h2>
 							<div class="form-holder">
 								<v-text-field
 									type="email" 
 									class="input"
 									color="#8c28b4" 
-									label="Email"
+									label="이메일"
 									v-model="loginId"
 									:rules="loginEmailRules"
 									required
-								/>
+									>
+								</v-text-field>
 								<v-text-field
 									type="password" 
 									class="input" 
 									color="#8c28b4" 
-									label="Password" 
+									label="비밀번호" 
 									v-model="loginPw"
 									:rules="loginPwRules"
+									autocomplete="off"
 									required
-									/>
+									>
+								</v-text-field>
 							</div>
-							<button class="submit-btn" @click="login">Log in</button>
+							<button class="submit-btn" @click="login">로그인</button>
 						</div>
 					</div>
 				</v-form>
+				
 			</v-container>
 		</v-col>
 	</v-row>
@@ -129,6 +149,8 @@
 
 	export default {
 		data: () => ({
+			dialog: false,
+			result: '',
 			signupValid: false,
 			loginValid: false,
 			name: '',
@@ -204,7 +226,7 @@
 				if (this.$refs.signupForm.validate()) {
 					const data = {
 						email: this.email,
-						location: this.addressCity + ' ' + this.addressGu + ' ' + this.addressDong,
+						location: this.result,
 						name: this.name,
 						password: this.password,
 						phone: this.contact
@@ -251,7 +273,8 @@
 							alert("잘못된 시도입니다.")
 						})
 				}
-			}
+			},
+			
 		}
   }
 </script>

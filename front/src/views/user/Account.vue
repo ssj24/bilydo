@@ -66,13 +66,41 @@
             </div>
           </v-col>
           <v-col cols="6" sm="8">
-            <h3 @click="appendInput($event.target)" class="cursorE">
+            <h3 class="cursorE mr-6" style="display: inline-block;">
               {{ userAddress }}
             </h3>
-            <div class="accountUpdateDisplay">
-              <input class="updateInput" type="text" v-model="userAddress">
-              <v-btn class="vBtn" @click="closeInput($event.target)">확인</v-btn>
-            </div>
+              <div class="text-center" style="display: inline-block;">
+              <v-dialog
+									v-model="dialog"
+									width="500"
+								>
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn
+											color="#8c28b4"
+											dark
+											v-bind="attrs"
+											v-on="on"
+										>
+											주소
+										</v-btn>
+									</template>
+
+									<v-card>
+										<v-card-title
+											class="headline"
+											style="background-color: #8c28b4; color: #fff;"
+											primary-title
+										>
+											주소: {{userAddress}}
+											<v-spacer></v-spacer>
+											<span @click="dialog = false" style="cursor: pointer;">
+												확인
+											</span>
+										</v-card-title>
+										<vue-daum-postcode @complete="userAddress = $event.address"/>
+									</v-card>
+								</v-dialog>
+							</div>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -562,6 +590,7 @@
     private newPassword = '';
     private userName = '';
     private userContact = '';
+    private dialog = false;
     private userAddress = '';
     private averagePoint = 5;
     private contractProgress: TradeRules[] = [];
