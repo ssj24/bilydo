@@ -81,7 +81,7 @@
 											v-bind="attrs"
 											v-on="on"
 										>
-											주소
+											주소 변경
 										</v-btn>
 									</template>
 
@@ -124,7 +124,7 @@
         <v-row align="center">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
-              게시글
+              대여 요청
             </div>
           </v-col>
           <v-col cols="6" sm="8">
@@ -132,10 +132,10 @@
               color="#8c28b4"
               outlined
               @click="messagesReset"
-              @click.stop="dialogAll = true;"
+              @click.stop="dialogOffer = true;"
             >
               <span style="color: #000; font-size: 1.2em; font-weight: 900;">
-                {{contracts.length}}
+                {{offers.length}}
               </span>
             </v-btn>
           </v-col>
@@ -527,31 +527,31 @@
       </v-card>
     </v-dialog>
     <v-dialog
-      v-model="dialogAll"
+      v-model="dialogOffer"
       max-width="680px"
       >
       <v-card class="contModal">
         <v-card-title class="modalTitle">
-          📖{{userName}}님의 전체 게시글 {{contracts.length}}건
+          📖{{userName}}님의 대여 요청 {{offers.length}}건
         </v-card-title>
         <p v-if="false" style="text-align: end; margin-right: 20px;">
           <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
           <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
         </p>
-        <v-card-text v-for="(cont, i) in contracts" :key="i" style="color: black; font-size: 1rem;">
+        <v-card-text v-for="(offer, i) in offers" :key="i" style="color: black; font-size: 1rem;">
           <v-row justify="center">
             <v-col cols="11" md="8">
               <v-row justify="center">
                 <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
-                  <router-link :to="{name:'Detail', params:{boardId:cont.id}}">
-                    {{cont.productName}}
+                  <router-link :to="{name:'Detail', params:{boardId:offer.boardId}}">
+                    {{offer.boardId}}
                   </router-link>
                 </v-col>
                 <v-col cols="11" sm="3" class="d-flex justify-center align-center t-center">
-                  {{ cont.registDate }}
+                  {{ offer.borrowSrt }}
                 </v-col>
                 <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center">
-                  {{cont.state}}
+                  {{offer.borrowEnd}}
                 </v-col>
               </v-row>
                 <hr style="background-color: #888; margin-top: 10px; border-radius: 50px;">  
@@ -566,7 +566,7 @@
             color="#000"
             style="font-size: 1.05em; margin: 0 20px 20px;"
             outlined
-            @click="dialogAll = false"
+            @click="dialogOffer = false"
           >
             확인
           </v-btn>
@@ -581,6 +581,7 @@
   import cookie from "@/cookie" 
   import baseURL from '../../base-url';
   import { TradeRules } from '@/models/rules/TradeRules'
+  import { OfferRules } from '@/models/rules/OfferRules'
   import { OfferData } from '@/models/rules/OfferData'
   import { ChainData } from '@/models/rules/ChainData'
 
@@ -596,7 +597,7 @@
     private contractProgress: TradeRules[] = [];
     private contractComplete: TradeRules[] = [];
     private contracts: TradeRules[] = [];
-    private dialogAll = false;
+    private dialogOffer = false;
     private dialogPro = false;
     private dialogCom = false;
     private dialogReview = false;
@@ -605,8 +606,10 @@
     private offerData: OfferData = {};
     private consumerData: OfferData[] = [];
     private chainData: ChainData[] = [];
+    private offers: OfferRules[] = [];
     private review: object = {};
     private chk = 0;
+    private chkTrade = 0;
     private finalPrice = 0;
 
     public appendInput(target: HTMLElement): void {
@@ -786,18 +789,38 @@
           }
         })
     }
+    public getTrades(): void {
+      baseURL('/users/user/trades?page=0&size=10')
+        .then(res=> {
+          console.log(res)
+          const totalPages = res.data.totalPages;
+          this.offers = res.data.content;
+          this.chkTrade = res.data.totalElements;
+          if (totalPages > 1) {
+            for (let i = 1; i < totalPages; i++) {
+              baseURL('/users/user/trades?page='+i+'&size=10')
+              .then(response => {
+                this.offers = this.offers.concat(response.data.content);
+              })
+            }
+          }
+        })
+    }
     public acceptOffer(id: number): void {
       if (confirm("이 요청을 수락하시겠습니까?")) {
         baseURL.put('/boards/user/requests/'+id)
         .then(() => {
           alert("요청을 수락하셨습니다")
+          this.dialogPro = false;
+          this.dialogReviewPro = false;
         })
         .catch(() => {
           alert("잘못된 시도입니다")
         })
       }
     }
-    created() {
+    mounted() {
+      this.$forceUpdate();
       this.getContracts();
       baseURL('/users/user')
       .then(res => {
@@ -810,6 +833,7 @@
       .then(res=>{
         this.averagePoint = res.data.score;
       })
+      this.getTrades();
     }
   }
 </script>

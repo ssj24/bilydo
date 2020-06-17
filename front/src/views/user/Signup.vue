@@ -203,7 +203,7 @@
 					}
 				});
 			});
-				
+			
 			signupBtn.addEventListener('click', (e) => {
 				const parent = e.target.parentNode;
 				Array.from(e.target.parentNode.classList).find((element) => {
@@ -222,6 +222,19 @@
 			});
 		},
 		methods: {
+			loginSwitched() {
+				const loginBtn = document.getElementById('login');
+				const signupBtn = document.getElementById('signup');
+				const parent = loginBtn.parentNode.parentNode;
+				Array.from(parent.classList).find((element) => {
+					if(element !== "slide-up") {
+						parent.classList.add('slide-up');
+					}else{
+						signupBtn.parentNode.classList.add('slide-up')
+						parent.classList.remove('slide-up');
+					}
+				});
+			},
 			signup() {
 				if (this.$refs.signupForm.validate()) {
 					const data = {
@@ -234,6 +247,7 @@
 					baseURL.post('/signup', data)
 						.then(() => {
 							alert("빌리도의 회원이 되셨습니다.")
+							this.loginSwitched();
 						})
 						.catch(() => {
 							alert("잘못된 시도입니다.")
@@ -251,7 +265,6 @@
 							const access = {headers: {"X-AUTH-TOKEN": response.data.accessToken}}
 							baseURL('/users/user', access)
 								.then(res => {
-									console.log(res)
 									const loginData = {
 										token: response.data.accessToken,
 										id: res.data.id,
@@ -262,8 +275,8 @@
 										location: res.data.location
 									}
 									cookie.setCookie(loginData);
-									this.$store.commit('loggedIn', loginData);
 									this.$store.commit('isLogin');
+									this.$store.commit('componentKeyPlus');
 									this.$router.push({
 										name: "Main"
 									})

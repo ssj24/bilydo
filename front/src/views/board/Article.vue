@@ -61,7 +61,7 @@
 										color="black" 
 										label="주소"
 										v-model="address"
-										:rules="contactRules"
+                    :rules="requiredRules"
 										required
 										disabled
 										>
