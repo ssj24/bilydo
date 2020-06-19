@@ -11,4 +11,16 @@ export default {
       return false;
     }
   },
+  userToken: () => {
+    return cookie.token();
+  },
+  userName: () => {
+    return cookie.cookieName();
+  },
+  userId: () => {
+    return Number(cookie.cookieId());
+  },
+  userLocation: () => {
+    return cookie.cookieLocation();
+  },
 }

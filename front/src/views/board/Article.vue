@@ -53,19 +53,54 @@
               </p>
             </v-col>
             <v-col cols="12" sm="9" class="articleContent">
-              <v-row>
-                <v-col cols="6" sm="4">
-                  <v-text-field required label="시/도" color="#fc2" v-model="addressCity" class="addressInput" :rules="requiredRules">
-                  </v-text-field>
-                </v-col>
-                <v-col cols="6" sm="4">
-                  <v-text-field required label="군/구" color="#fc2" v-model="addressGu" class="addressInput" :rules="requiredRules">
-                  </v-text-field>
-                </v-col>
-                <v-col cols="6" sm="4">
-                  <v-text-field required label="동" color="#fc2" v-model="addressDong" class="addressInput" :rules="requiredRules">
-                  </v-text-field>
-                </v-col>
+              <v-row class="pl-4" align="center">
+                <v-col cols="12" sm="8">
+									<v-text-field
+										type="text" 
+										class="input"
+										color="black" 
+										label="주소"
+										v-model="address"
+                    :rules="requiredRules"
+										required
+										disabled
+										>
+									</v-text-field>
+								</v-col>
+								<v-col>
+									<div class="text-center">
+                    <v-dialog
+                      v-model="dialog"
+                      width="500"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          color="#f66"
+                          dark
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          주소 찾기
+                        </v-btn>
+                      </template>
+
+                      <v-card>
+                        <v-card-title
+                          class="headline"
+                          style="background-color: #f66; color: #fff;"
+                          primary-title
+                        >
+                          주소: {{address}}
+                          <v-spacer></v-spacer>
+                          <span @click="dialog = false" style="cursor: pointer;">
+                            확인
+                          </span>
+                        </v-card-title>
+                        <vue-daum-postcode @complete="address = $event.address"/>
+                      </v-card>
+                    </v-dialog>
+                  </div>
+								</v-col>
               </v-row>
               
             </v-col>
@@ -246,9 +281,8 @@
     private product = '';
     private category = '';
     private used = '';
-    private addressCity = '';
-    private addressGu = '';
-    private addressDong = '';
+    private address = '';
+    private dialog = false;
     private startDate = new Date().toISOString().substr(0, 10);
     private endDate = new Date(+new Date() + (86400000 * 7)).toISOString().substr(0, 10);
     private startMenu = false;
@@ -356,9 +390,8 @@
           pMonth = this.priceMonth;
         }
         const data = `{
-          productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.addressCity} ${this.addressGu}", borrowableSrt: "${this.startDate}T00:00:00", borrowableEnd: "${this.endDate}T00:00:00", subscript: "${this.description}", priceDay: "${pDay}", priceWeek: "${pWeek}", priceMonth: "${pMonth}"
+          productName : "${this.product}", category: "${this.category}", producerId : "${cookie.cookieId()}", usedTime : "${this.used}", state : "READY", location : "${this.address}", borrowableSrt: "${this.startDate}T00:00:00", borrowableEnd: "${this.endDate}T00:00:00", subscript: "${this.description}", priceDay: "${pDay}", priceWeek: "${pWeek}", priceMonth: "${pMonth}"
         }`
-        console.log(data)
         formData.append("boardString", data)
         
         baseURL.post('/boards/board', formData, {

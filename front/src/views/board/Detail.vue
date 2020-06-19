@@ -136,107 +136,110 @@
           </v-col>
         </v-row>
         <v-row justify="center" class="buttons">
-          <button class="articleSubmit draw meet" @click.stop="chkRadios">
+          <button v-if="chk" class="articleSubmit draw meet" >
+            수정하기
+          </button>
+          <button v-else class="articleSubmit draw meet" @click.stop="chkRadios">
             대여하기
           </button>
         </v-row>
       </v-col>
     </v-row>
-          <v-dialog
-            v-model="dialog"
-            max-width="512px"
-            >
-            <v-card class="contModal backModal">
-              <v-card-title class="modalTitle">
-                <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
-                  {{producer.name}}
-                </router-link>
-                님께 대여를 요청합니다
-              </v-card-title>
-                
-              <v-card-text style="color: black; font-size: 1rem;">
-                <div>
-                  
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-menu
-                        ref="startMenuModal"
-                        v-model="startMenuModal"
-                        :close-on-content-click="false"
-                        :return-value.sync="startDateModal"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="startDateModal"
-                            label="대여 시작일"
-                            readonly
-                            v-on="on"
-                            color="#f92"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="startDateModal" no-title scrollable color="#f45e61">
-                          <v-spacer></v-spacer>
-                          <v-btn text color="#f45e61" @click="$refs.startMenuModal.save(startDateModal)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-spacer></v-spacer>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-menu
-                        ref="endMenuModal"
-                        v-model="endMenuModal"
-                        :close-on-content-click="false"
-                        :return-value.sync="endDateModal"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="endDateModal"
-                            label="대여 종료일"
-                            readonly
-                            v-on="on"
-                            color="#f92"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="endDateModal" no-title scrollable color="#f45e61">
-                          <v-spacer></v-spacer>
-                          <v-btn text color="#f45e61" @click="$refs.endMenuModal.save(endDateModal)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                    </v-col>
-                  </v-row>
-                  <p>
-                    예상가격: {{price}}
-                  </p>
-                  <p>
-                    연락처: {{producer.phone}}
-                  </p>
-                  <p>
-                    <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
-                      {{producer.name}}
-                    </router-link>
-                    님의 거래 평점: {{producer.score}}점
-                  </p>
-                </div>
-              </v-card-text>
-              <v-card-actions class="d-flex justify-center">
-                <v-btn
-                  color="#000"
-                  style="font-size: 1.05em; margin-bottom: 20px;"
-                  class="submitBtn"
-                  outlined
-                  @click="offerCon"
+    <v-dialog
+      v-model="dialog"
+      max-width="512px"
+      >
+      <v-card class="contModal backModal">
+        <v-card-title class="modalTitle">
+          <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
+            {{producer.name}}
+          </router-link>
+          님께 대여를 요청합니다
+        </v-card-title>
+          
+        <v-card-text style="color: black; font-size: 1rem;">
+          <div>
+            
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-menu
+                  ref="startMenuModal"
+                  v-model="startMenuModal"
+                  :close-on-content-click="false"
+                  :return-value.sync="startDateModal"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
                 >
-                  대여 요청
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="startDateModal"
+                      label="대여 시작일"
+                      readonly
+                      v-on="on"
+                      color="#f92"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="startDateModal" no-title scrollable color="#f45e61">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="#f45e61" @click="$refs.startMenuModal.save(startDateModal)">OK</v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col cols="12" sm="6" md="4">
+                <v-menu
+                  ref="endMenuModal"
+                  v-model="endMenuModal"
+                  :close-on-content-click="false"
+                  :return-value.sync="endDateModal"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="endDateModal"
+                      label="대여 종료일"
+                      readonly
+                      v-on="on"
+                      color="#f92"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="endDateModal" no-title scrollable color="#f45e61">
+                    <v-spacer></v-spacer>
+                    <v-btn text color="#f45e61" @click="$refs.endMenuModal.save(endDateModal)">OK</v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
+            <p>
+              예상가격: {{price}}
+            </p>
+            <p>
+              연락처: {{producer.phone}}
+            </p>
+            <p>
+              <router-link :to="{name:'Account', params:{userId:producerId}}" class="toAccount">
+                {{producer.name}}
+              </router-link>
+              님의 거래 평점: {{producer.score}}점
+            </p>
+          </div>
+        </v-card-text>
+        <v-card-actions class="d-flex justify-center">
+          <v-btn
+            color="#000"
+            style="font-size: 1.05em; margin-bottom: 20px;"
+            class="submitBtn"
+            outlined
+            @click="offerCon"
+          >
+            대여 요청
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     
   </v-container>
 </template>
@@ -244,6 +247,7 @@
 <script lang="ts">
   import { Component, Vue, Watch } from 'vue-property-decorator'
   import baseUrl from '@/base-url';
+  import cookie from '@/cookie'
 
   @Component
   export default class Article extends Vue{
@@ -269,6 +273,7 @@
     private boardId = 0;
     private producerId = 0;
     private producer: object[] = [];
+    private chk = false;
     
     public offerCon(): void {
       const data = {
@@ -301,12 +306,21 @@
       if (this.radios == 'checkboxDay') {
           this.price = (this.priceDay * diffDate) + (this.priceDay * diffMonth * 30) + (this.priceDay * diffYear * 365)
           Math.floor(this.price)
+          if (isNaN(this.price)) {
+            this.price = 0
+          }
       } else if (this.radios == 'checkboxWeek') {
           this.price = (this.priceWeek / 7) * diffDate + (this.priceWeek * 4 * diffMonth) + (this.priceWeek * 4 * 12 * diffYear)
           Math.floor(this.price)
+          if (isNaN(this.price)) {
+            this.price = 0
+          }
       } else {
           this.price = (this.priceMonth / 30) * diffDate + (this.priceMonth * diffMonth) + (this.priceMonth * 12 * diffYear)
           Math.floor(this.price)
+          if (isNaN(this.price)) {
+            this.price = 0
+          }
       }
       if (this.price < 0) {
         alert("날짜를 다시 설정해주세요")
@@ -366,6 +380,9 @@
           if (res.data.borrowableSrt && res.data.borrowableEnd) {
             this.startDate = res.data.borrowableSrt.slice(0, 10);
             this.endDate = res.data.borrowableEnd.slice(0, 10);
+          }
+          if (this.producerId == Number(cookie.cookieId())) {
+            this.chk = true;
           }
           baseUrl('/users/'+res.data.producerId)
           .then(res=>{

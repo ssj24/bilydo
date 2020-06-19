@@ -1,36 +1,76 @@
 <template>
   <div>
-    <h1>list</h1>
     <v-row justify="center">
       <v-col 
         cols="10" sm="4" 
         v-for="item in items"
         :key="item.product">
-        <div class="property-card">
-          <div class="property-image" 
-            :style="{'background-image': 'url('+item.pic+')'}"
-          >
-            <div class="property-image-title">
-              {{ item.price }} / {{item.duration}}
+
+	<router-link :to="{name:'Detail', params:{boardId:item.id}}">
+          <div class="property-card">
+            <div class="property-image" 
+              :style="{'background-image': 'url('+'http://13.125.209.188:8080/' +item.imagesPath[0]+')'}"
+            >
+              <div class="property-image-title">
+                {{ item.borrowableSrt.substring(0,10) }} / {{item.borrowableEnd.substring(0,10)}}
+              </div>
+            </div>
+            <div class="property-description">
+              <h3> {{item.productName}} </h3>
+              <p>{{item.borrowableSrt.substring(0,10)}}/{{item.borrowableEnd.substring(0,10)}}</p>
             </div>
           </div>
-          <div class="property-description">
-            <h3> {{item.product}} </h3>
-            <p>{{item.price}}/{{item.duration}}</p>
-          </div>
-        </div>
+        </router-link>
+
       </v-col>
     </v-row>
-    
+    <v-row justify="center">
+      <div class="text-center">
+        <v-pagination
+          v-model="currentPage"
+          :length="pageLen"
+          @input="next"
+        ></v-pagination>
+      </div>
+    </v-row>
   </div>
 </template>
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator'
+  import baseURL from "@/base-url"
 
 	@Component
   export default class ResultList extends Vue{
     @Prop() items!: object[]
+    @Prop() currentPage!: number
+    @Prop() listSize!: number
+    @Prop() category!: string
+    @Prop() productName!: string
+    @Prop() pageSize!: number
+
+    private pageLen = 0;
+    created(){
+        this.pageLen = Math.ceil(this.listSize/this.pageSize);
+        //this.pageLen = this.listSize/this.pageSize;
+    }
+
+    public next(page: number): void{
+      if(this.category === "AuA��") this.category = '';
+      if(this.productName === undefined) this.productName = '';
+
+      baseURL.get('/boards', {
+        params: {
+          category:this.category,
+          location:'',
+          page:page-1,
+          productName:this.productName,
+          size:this.pageSize
+        }
+      }).then((response) => {
+        this.items = response.data.content;
+      });
+    }
   }
 </script>
 
