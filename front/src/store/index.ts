@@ -7,14 +7,13 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    componentKey: 0,
     mainList: true,
     isLoggedIn: getters.isLogin(),
-    token: '',
-    id: 0,
-    email: '',
-    name: '',
-    phone: '',
-    location: '',
+    token: getters.userToken() as string,
+    id: getters.userId() as number,
+    name: getters.userName() as string,
+    location: getters.userLocation() as string,
     messages: 0
   },
   getters,

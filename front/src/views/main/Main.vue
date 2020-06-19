@@ -140,8 +140,8 @@
       }
       if (this.userLocation) {
         baseURL('/boards?location='+this.userLocation+'&page=0&size=5')
-        .then(res => {
-          this.regionBoards = res.data.content;
+        .then(response => {
+          this.regionBoards = response.data.content;
         })
       }
       baseURL('/boards?page=0&size=10')

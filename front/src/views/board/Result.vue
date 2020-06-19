@@ -41,6 +41,7 @@
   import ResultList from "@/views/board/ResultList.vue"
   import ResultMap from "@/views/board/ResultMap.vue"
   import ResultVisual from "@/views/board/ResultVisual.vue"
+  import baseURL from "@/base-url"
   
   @Component({
     components: {
@@ -55,8 +56,8 @@
     @Prop() listSize!: number
     @Prop() productName!: string
     
-    private pageSize = 5;
-    private currentPage = 0;
+    private pageSize = 3;
+    private currentPage = 1;
 
     private btn1 = true;
     private btn2 = false;
@@ -76,13 +77,26 @@
       this.btn2 = false;
       this.btn3 = true;
     }
+    public searchBoardKeyword(): void{
+      if(this.category === "전체"){
+        this.category = "";
+      }
+      
+      baseURL.get('/boards', {
+        params: {
+          category: this.category,
+          page: this.currentPage-1,
+          productName: this.productName,
+          size: this.pageSize
+        }
+      }).then((response) => {
+        this.regionBoards = response.data.content;
+        
+      });
+    
+    }
     created() {
-      this.currentPage = 0;
-      console.log("category : ",this.$props.category);
-      console.log("listSize : ",this.$props.listSize);
-      console.log("productName : ",this.$props.productName);
-
-      //api/boards 에 요청~
+      this.searchBoardKeyword();
     }
 
   }
