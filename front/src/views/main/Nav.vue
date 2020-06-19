@@ -52,7 +52,7 @@
           <v-btn icon 
             title="계정"
             style="color: black; font-size: 1em; font-weight: 600; margin-right: 5px;">
-            <router-link :to="{name:'Account', params:{userId:$store.state.id}}" class="toMypage">
+            <router-link :to="{name:'Account', params:{userId:userId}}" class="toMypage">
               <v-badge
                 :content="$store.state.messages"
                 :value="$store.state.messages"

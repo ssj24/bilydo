@@ -11,7 +11,7 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12" sm="10" class="attrs">
-        <v-row align="center">
+        <v-row align="center" v-if="isSame">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
               비밀번호
@@ -69,7 +69,7 @@
             <h3 class="cursorE mr-6" style="display: inline-block;">
               {{ userAddress }}
             </h3>
-              <div class="text-center" style="display: inline-block;">
+              <div class="text-center" style="display: inline-block;"  v-if="isSame">
               <v-dialog
 									v-model="dialog"
 									width="500"
@@ -121,7 +121,25 @@
             </span>
           </v-col>
         </v-row>
-        <v-row align="center">
+        <v-row align="center" v-if="!isSame">
+          <v-col cols="6" sm="4">
+            <div class="accountTitle">
+              게시글
+            </div>
+          </v-col>
+          <v-col cols="6" sm="8">
+            <v-btn
+              color="#8c28b4"
+              outlined
+              @click.stop="dialogDiff = true;"
+            >
+              <span style="color: #000; font-size: 1.2em; font-weight: 900;">
+                {{contractsDiff.length}}
+              </span>
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row align="center" v-if="isSame">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
               대여 요청
@@ -140,7 +158,7 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row align="center">
+        <v-row align="center" v-if="isSame">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
               대기 중
@@ -297,7 +315,7 @@
             </v-dialog>
           </v-col>
         </v-row>
-        <v-row align="center">
+        <v-row align="center" v-if="isSame">
           <v-col cols="6" sm="4">
             <div class="accountTitle">
               대여 중
@@ -383,7 +401,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row justify="center" v-if="isSame">
       <div class="bttn out cyann">
         <span @click="updateUser">
           수정하기
@@ -403,7 +421,6 @@
         </v-card-title>
         <v-card-title class="modalTitle" v-else>
           대여인!에 대한 리뷰를 남겨주세요
-          <!-- {{offerData}} -->
         </v-card-title>
         <div class="starContainer">
           <div class="feedback">
@@ -573,6 +590,50 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="dialogDiff"
+      max-width="680px"
+      >
+      <v-card class="contModal">
+        <v-card-title class="modalTitle">
+          📖{{userName}}님의 게시글 {{contractsDiff.length}}건
+        </v-card-title>
+        <p v-if="false" style="text-align: end; margin-right: 20px;">
+          <span style="background-color: #D9FFF2; font-weight: 900; padding: 5px; border-radius: 50px;">제공자</span>
+          <span style="background-color: #F3FFD2; font-weight: 900; padding: 5px; border-radius: 50px;">대여자</span>
+        </p>
+        <v-card-text v-for="(cont, i) in contractsDiff" :key="i" style="color: black; font-size: 1rem;">
+          <v-row justify="center">
+            <v-col cols="11" md="8">
+              <v-row justify="center">
+                <v-col cols="11" sm="4" class="d-flex justify-center align-center t-center" style="font-weight: 900;">
+                  <router-link :to="{name:'Detail', params:{boardId:cont.id}}">
+                    {{cont.productName}}
+                  </router-link>
+                </v-col>
+                <v-col cols="11" sm="7" class="d-flex justify-center align-center t-center">
+                  {{ cont.subscript }}
+                </v-col>
+              </v-row>
+                <hr style="background-color: #888; margin-top: 10px; border-radius: 50px;">  
+
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="#000"
+            style="font-size: 1.05em; margin: 0 20px 20px;"
+            outlined
+            @click="dialogOffer = false"
+          >
+            확인
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -597,11 +658,13 @@
     private contractProgress: TradeRules[] = [];
     private contractComplete: TradeRules[] = [];
     private contracts: TradeRules[] = [];
+    private contractsDiff: TradeRules[] = [];
     private dialogOffer = false;
     private dialogPro = false;
     private dialogCom = false;
     private dialogReview = false;
     private dialogReviewPro = false;
+    private dialogDiff = false;
     private data: TradeRules = {};
     private offerData: OfferData = {};
     private consumerData: OfferData[] = [];
@@ -611,22 +674,27 @@
     private chk = 0;
     private chkTrade = 0;
     private finalPrice = 0;
+    private isSame = false;
 
     public appendInput(target: HTMLElement): void {
-      const appendTarget: HTMLElement | null = target.parentElement;
-      if (appendTarget && appendTarget.firstElementChild && appendTarget.lastElementChild) {
-        appendTarget.firstElementChild.classList.add("accountUpdateDisplay")
-        appendTarget.lastElementChild.classList.remove("accountUpdateDisplay")
+      if (this.$route.params.userId == cookie.cookieId()) {
+        const appendTarget: HTMLElement | null = target.parentElement;
+        if (appendTarget && appendTarget.firstElementChild && appendTarget.lastElementChild) {
+          appendTarget.firstElementChild.classList.add("accountUpdateDisplay")
+          appendTarget.lastElementChild.classList.remove("accountUpdateDisplay")
+        }
       }
     }
     public closeInput(target: HTMLElement): void {
-      const tempTarget: HTMLElement | null = target.parentElement;
-      
-      if (tempTarget) {
-        const removeTarget: HTMLElement | null = (tempTarget.parentElement as HTMLElement).parentElement;
-        if (removeTarget && removeTarget.firstElementChild && removeTarget.lastElementChild) {
-          removeTarget.firstElementChild.classList.remove("accountUpdateDisplay")
-          removeTarget.lastElementChild.classList.add("accountUpdateDisplay")
+      if (this.$route.params.userId == cookie.cookieId()) {
+        const tempTarget: HTMLElement | null = target.parentElement;
+        
+        if (tempTarget) {
+          const removeTarget: HTMLElement | null = (tempTarget.parentElement as HTMLElement).parentElement;
+          if (removeTarget && removeTarget.firstElementChild && removeTarget.lastElementChild) {
+            removeTarget.firstElementChild.classList.remove("accountUpdateDisplay")
+            removeTarget.lastElementChild.classList.add("accountUpdateDisplay")
+          }
         }
       }
     }
@@ -639,8 +707,6 @@
         for (let i=0; i < cont.arr.length; i++) {
           for (let j=0; j < this.chainData.length; j++) {
             if (cont.arr[i].id == this.chainData[j].tradeId) {
-              // cont.arr[i].borrowSrt = cont.arr[i].borrowSrt?.slice(0, 10);
-              // cont.arr[i].borrowEnd = cont.arr[i].borrowEnd?.slice(0, 10);
               this.offerData = cont.arr[i]
             }
           }
@@ -665,9 +731,7 @@
           cont.arr[i].borrowEnd = cont.arr[i].borrowEnd?.slice(0, 10);
         }
         this.data = cont;
-        // if (this.consumerData.length) {
-        //   } 
-          this.dialogReviewPro = true;
+        this.dialogReviewPro = true;
       } else {
         alert("아직 대여 요청이 없습니다.")
       }
@@ -730,16 +794,7 @@
             baseURL('/boards/user/'+this.contracts[i].id+'/requests')
               .then(res=>{
                 this.contracts[i].arr = res.data;
-                // if (res.data.length) {
-                //   for (let j = 0; j < res.data.length; j++) {
-                //     console.log(i, 'd')
-                //     baseURL('/users/'+res.data[j].consumerId)
-                //     .then(response => {
-                //       this.contracts[i].arr = response.data;
-                //       })
-                //   }
-                // } 
-              this.contractProgress.push(this.contracts[i]);
+                this.contractProgress.push(this.contracts[i]);
             })
           } else {
             if (this.contracts[i].borrowableEnd && this.contracts[i].borrowableSrt) {
@@ -772,27 +827,42 @@
         this.offerData = {};
       }
     }
-    public getContracts(): void {
-      baseURL('/users/user/boards?page=0&size=10')
+    public getContracts(id?: string): void {
+      if (id) {
+        baseURL(`/users/${id}/boards?page=0&size=10`)
         .then(res=> {
-          // content의 board state를 보고 진행 중 거래와 진행 완료 거래로 나누기
           const totalPages = res.data.totalPages;
-          this.contracts = res.data.content;
+          this.contractsDiff = res.data.content;
           this.chk = res.data.totalElements;
           if (totalPages > 1) {
             for (let i = 1; i < totalPages; i++) {
-              baseURL('/users/user/boards?page='+i+'&size=10')
+              baseURL(`/users/${id}/boards?page=${i}&size=10`)
               .then(response => {
-                this.contracts = this.contracts.concat(response.data.content);
+                this.contractsDiff = this.contractsDiff.concat(response.data.content);
               })
             }
           }
         })
+      } else {
+        baseURL('/users/user/boards?page=0&size=10')
+          .then(res=> {
+            const totalPages = res.data.totalPages;
+            this.contracts = res.data.content;
+            this.chk = res.data.totalElements;
+            if (totalPages > 1) {
+              for (let i = 1; i < totalPages; i++) {
+                baseURL('/users/user/boards?page='+i+'&size=10')
+                .then(response => {
+                  this.contracts = this.contracts.concat(response.data.content);
+                })
+              }
+            }
+          })
+      }
     }
     public getTrades(): void {
       baseURL('/users/user/trades?page=0&size=10')
         .then(res=> {
-          console.log(res)
           const totalPages = res.data.totalPages;
           this.offers = res.data.content;
           this.chkTrade = res.data.totalElements;
@@ -820,20 +890,31 @@
       }
     }
     mounted() {
-      this.$forceUpdate();
-      this.getContracts();
-      baseURL('/users/user')
-      .then(res => {
-        this.userName = res.data.name;
-        this.newPassword = res.data.password;
-        this.userContact = res.data.phone;
-        this.userAddress = res.data.location;
-      })
-      baseURL('/users/'+cookie.cookieId())
-      .then(res=>{
-        this.averagePoint = res.data.score;
-      })
-      this.getTrades();
+      if (this.$route.params.userId == cookie.cookieId()) {
+        this.isSame = true;
+        baseURL('/users/user')
+        .then(res => {
+          this.userName = res.data.name;
+          this.newPassword = res.data.password;
+          this.userContact = res.data.phone;
+          this.userAddress = res.data.location;
+        })
+        baseURL('/users/'+cookie.cookieId())
+        .then(res=>{
+          this.averagePoint = res.data.score;
+        })
+        this.getContracts();
+        this.getTrades();
+      } else {
+        this.getContracts(this.$route.params.userId)
+        baseURL('/users/'+this.$route.params.userId)
+        .then(res=>{
+          this.userName = res.data.name;
+          this.userContact = res.data.phone;
+          this.userAddress = res.data.location;
+          this.averagePoint = res.data.score;
+        })
+      }
     }
   }
 </script>
@@ -844,12 +925,8 @@
   height: 100%;
   overflow-x: hidden;
   position: relative;
-  // background-image: url('../../assets/images/goldBorder.png');
   background-size: cover;
-  
 }
-
-
 .vBtn {
   position: relative;
   min-width: 50px !important;
@@ -867,9 +944,6 @@
     margin-top: 20px; 
     background-color: rgba(255, 255, 255, 0.705);
     position: relative;
-    // border-top: 5px solid;
-    // border-image: linear-gradient(to left, #be85ff, rgb(255, 238, 0));
-    // border-image-slice: 1;
     &:before {
       content: '';
       position: absolute;
@@ -898,7 +972,6 @@
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           color: black;
-          // opacity: 0.7;
           transition: 0.25s;
           }
       }
@@ -908,18 +981,13 @@
         transition: 0.25s;
         cursor: pointer;
       }
-      
       &:hover {
         background-color: #fafafa;
-        &:before {
-          // opacity: 0.7;
-        }
       }
     }
     .updateInput {
       position: relative;
       margin-right: 1.5rem;
-      // left: 3rem;
       transition: 0.25s;
       border-bottom: 1px solid black;
     }
@@ -936,16 +1004,12 @@
 		background-position: 0% 50%;
 	}
 }
-.accountTitle + .accountTitle {
-  // border-top: 1px solid rgba(197, 197, 197, 0.9);
-}
 .accountUpdateDisplay {
   display: none;
 }
 .cursorE {
   cursor: pointer;
 }
-
 .modalTitle {
   text-shadow: 0px 0px 1px #888;
 }
@@ -959,9 +1023,7 @@
   border: solid #fff9d6 !important;
 }
 .reviewModal {
-  // background-color:rgb(252, 252, 237) !important;
   border-top: 5px solid #8905e0 !important;
-  // border-bottom: 5px solid #b695cc !important;
 }
 
 @mixin borderGradient($from, $to, $weight: 0) {
@@ -978,15 +1040,10 @@
               1px 1px 0 $weight rgba($to, .75),
               -1px -1px 0 $weight rgba($from, .75);
 }
-
-/// BASIC EXAMPLE ///
-
 .circle {
   border-radius: 100%;
   border: borderGradient(red, yellow) !important;
 }
-
-// settings
 $text-color: #FFB902;
 $line-color: #FFB902;
 $line-size: 7;
@@ -1118,12 +1175,6 @@ $line-size: 7;
 }
 
 .bttn {
-  // opacity: 0;
-
-  // will-change: transform, opacity;
-  // animation: fadeIn 0.6s 0.5s forwards ease-out;
-  
-  // cyan theme
   &.cyann {
     $theme-color: #8b3182;
     span { color: $theme-color; }
@@ -1139,9 +1190,6 @@ $line-size: 7;
   }
 }
 
-//
-//  Animations
-//
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1289,8 +1337,6 @@ $line-size: 7;
   }
   .heart:not(:checked) > input {
     display: none;
-  }
-  #like {
   }
   #like:not(:checked) > label {
     cursor:pointer;
